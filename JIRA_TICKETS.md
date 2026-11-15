@@ -1,7 +1,7 @@
 # Echopost Master Jira Tickets Registry
 
 * **Instance**: `https://echopost.atlassian.net`
-* **Last Synchronized**: `2026-11-15 12:26:58`
+* **Last Synchronized**: `2026-11-15 12:40:00`
 * **Sync Command**: `jira sync-map` (automatically updated on `create-issue`, `update-issue`, and `transition-issue`)
 
 ---
@@ -303,11 +303,11 @@
 | [EVD-271](https://echopost.atlassian.net/browse/EVD-271) | Subtask | **Done** | Medium | EVD-269 | Build 30Hz fixed-tick physics loop, route waypoints, and surface friction models |
 | [EVD-272](https://echopost.atlassian.net/browse/EVD-272) | Subtask | **Done** | Medium | EVD-269 | Implement cartoon incident model (stumbles, launches, surges) with chain-reaction limiters |
 | [EVD-273](https://echopost.atlassian.net/browse/EVD-273) | Subtask | **Done** | Medium | EVD-269 | Create automated 1,000-run replay determinism test suite |
-| [EVD-274](https://echopost.atlassian.net/browse/EVD-274) | Story | **To Do** | Medium | EVD-262 | M2: Integer-Penny Economy, Bookmaker Odds & SQLite Career Persistence |
-| [EVD-275](https://echopost.atlassian.net/browse/EVD-275) | Subtask | **To Do** | Medium | EVD-274 | Implement integer-penny banking ledger and Stake+Profit payout calculator |
-| [EVD-276](https://echopost.atlassian.net/browse/EVD-276) | Subtask | **To Do** | Medium | EVD-274 | Build explainable bookmaker odds quote engine with trait and weather weighting |
-| [EVD-277](https://echopost.atlassian.net/browse/EVD-277) | Subtask | **To Do** | Medium | EVD-274 | Develop idempotent settlement engine and bounded post-race form decay |
-| [EVD-278](https://echopost.atlassian.net/browse/EVD-278) | Subtask | **To Do** | Medium | EVD-274 | Setup SQLite schema and GRDB repository for 48-gnome persistent records |
+| [EVD-274](https://echopost.atlassian.net/browse/EVD-274) | Story | **Done** | Medium | EVD-262 | M2: Integer-Penny Economy, Bookmaker Odds & SQLite Career Persistence |
+| [EVD-275](https://echopost.atlassian.net/browse/EVD-275) | Subtask | **Done** | Medium | EVD-274 | Implement integer-penny banking ledger and Stake+Profit payout calculator |
+| [EVD-276](https://echopost.atlassian.net/browse/EVD-276) | Subtask | **Done** | Medium | EVD-274 | Build explainable bookmaker odds quote engine with trait and weather weighting |
+| [EVD-277](https://echopost.atlassian.net/browse/EVD-277) | Subtask | **Done** | Medium | EVD-274 | Develop idempotent settlement engine and bounded post-race form decay |
+| [EVD-278](https://echopost.atlassian.net/browse/EVD-278) | Subtask | **Done** | Medium | EVD-274 | Setup SQLite schema and GRDB repository for 48-gnome persistent records |
 | [EVD-279](https://echopost.atlassian.net/browse/EVD-279) | Story | **To Do** | Medium | EVD-262 | M3: Embedded WebSocket Gateway & Realtime Session Lifecycle |
 | [EVD-280](https://echopost.atlassian.net/browse/EVD-280) | Subtask | **To Do** | Medium | EVD-279 | Integrate embedded HTTP & WebSocket server (FlyingFox) on port 8778 |
 | [EVD-281](https://echopost.atlassian.net/browse/EVD-281) | Subtask | **To Do** | Medium | EVD-279 | Implement session lifecycle state machine (Lobby to Finale) and 20-Gnome Gem allocator |

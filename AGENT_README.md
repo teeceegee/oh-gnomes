@@ -58,7 +58,12 @@
       - [EVD-271](https://echopost.atlassian.net/browse/EVD-271): *Build 30Hz fixed-tick physics loop, route waypoints, and surface friction models* (Subtask, `Done`)
       - [EVD-272](https://echopost.atlassian.net/browse/EVD-272): *Implement cartoon incident model (stumbles, launches, surges) with chain-reaction limiters* (Subtask, `Done`)
       - [EVD-273](https://echopost.atlassian.net/browse/EVD-273): *Create automated 1,000-run replay determinism test suite* (Subtask, `Done`)
-    - [EVD-274](https://echopost.atlassian.net/browse/EVD-274): *M2: Integer-Penny Economy, Bookmaker Odds & SQLite Career Persistence* (Story, `To Do`)
+    - [EVD-274](https://echopost.atlassian.net/browse/EVD-274): *M2: Integer-Penny Economy, Bookmaker Odds & SQLite Career Persistence* (Story, `Done`)
+      - [EVD-275](https://echopost.atlassian.net/browse/EVD-275): *Implement integer-penny banking ledger and Stake+Profit payout calculator* (Subtask, `Done`)
+      - [EVD-276](https://echopost.atlassian.net/browse/EVD-276): *Build explainable bookmaker odds quote engine with trait and weather weighting* (Subtask, `Done`)
+      - [EVD-277](https://echopost.atlassian.net/browse/EVD-277): *Develop idempotent settlement engine and bounded post-race form decay* (Subtask, `Done`)
+      - [EVD-278](https://echopost.atlassian.net/browse/EVD-278): *Setup SQLite schema and GRDB repository for 48-gnome persistent records* (Subtask, `Done`)
+    - [EVD-279](https://echopost.atlassian.net/browse/EVD-279): *M3: Embedded WebSocket Gateway & Realtime Session Lifecycle* (Story, `To Do`)
     - [EVD-279](https://echopost.atlassian.net/browse/EVD-279): *M3: Embedded WebSocket Gateway & Realtime Session Lifecycle* (Story, `To Do`)
     - [EVD-283](https://echopost.atlassian.net/browse/EVD-283): *M4: Mobile Phone Web Controller (PWA)* (Story, `To Do`)
     - [EVD-287](https://echopost.atlassian.net/browse/EVD-287): *M5: Metal Broadcast Presentation & Neural Voice Commentary* (Story, `To Do`)
@@ -74,3 +79,4 @@
 - **2026-11-15:** Established complete Jira hierarchy under Epic [EVD-262](https://echopost.atlassian.net/browse/EVD-262), generating 8 Milestone Stories (`EVD-265` to `EVD-296`) and 27 actionable Subtasks (`EVD-266` to `EVD-299`). Synchronized registries across workspace `JIRA_TICKETS.md` and master `jira_tickets_map.md`.
 - **2026-11-15:** Completed **Milestone 0 (M0)**: Implemented modular Swift 6 `Package.swift`, authored all domain models in `GnomesCore`, implemented JSON schema wire contracts and Mystery Mode server projection filters in `GnomesContracts`, and executed `swift test` with 7 automated unit tests passing in 0.001s. Closed `EVD-265`, `EVD-266`, `EVD-267`, and `EVD-268` in Jira.
 - **2026-11-15:** Completed **Milestone 1 (M1)**: Implemented `Xoshiro256StarStar` deterministic PRNG with named sub-streams, 30Hz fixed-tick physics simulation engine (`SimulationEngine`), surface friction and obstacle models, and `IncidentLimiter` cascade controls. Passed all 11 test suites including the 1,000-run bit-exact replay determinism verification test in 17.09s. Closed `EVD-269`, `EVD-270`, `EVD-271`, `EVD-272`, and `EVD-273` in Jira.
+- **2026-11-15:** Completed **Milestone 2 (M2)**: Implemented `BankingLedger` actor with integer pennies, `BookmakerService` fractional ladder quotes, `SettlementService` Stake+Profit settlement with strict idempotency and dead-heat tie rules, `FormEvolutionService` with bounded decay and clamping, and native Darwin `SQLiteDatabase` with `GnomeRepository` (WAL mode enabled). Passed all 18 automated tests in 16.69s. Closed `EVD-274`, `EVD-275`, `EVD-276`, `EVD-277`, and `EVD-278` in Jira.

@@ -52,5 +52,13 @@ let package = Package(
             name: "GnomesSimulationTests",
             dependencies: ["GnomesSimulation", "GnomesCore"]
         ),
+        .testTarget(
+            name: "GnomesEconomyTests",
+            dependencies: ["GnomesEconomy", "GnomesCore"]
+        ),
+        .testTarget(
+            name: "GnomesPersistenceTests",
+            dependencies: ["GnomesPersistence", "GnomesCore"]
+        ),
     ]
 )
