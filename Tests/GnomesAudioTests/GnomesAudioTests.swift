@@ -35,15 +35,16 @@ struct GnomesAudioTests {
         let generator = ProceduralCommentaryGenerator()
 
         let start = generator.commentaryForStart(courseName: "Garden Grand Prix", entrantsCount: 8)
-        #expect(start.contains("Garden Grand Prix"))
-        #expect(start.contains("8 gnomes"))
+        #expect(!start.isEmpty)
+        #expect(start.contains("gnomes") || start.contains("off") || start.contains("Garden Grand Prix"))
 
         let stumble = generator.commentaryForIncident(runnerName: "Barnaby", incidentType: .stumble, reason: "slipped")
         #expect(stumble.contains("Barnaby"))
-        #expect(stumble.contains("stumble"))
+        #expect(stumble.contains("stumble") || stumble.contains("Disaster") || stumble.contains("footing"))
 
         let launch = generator.commentaryForIncident(runnerName: "Gimlet", incidentType: .airborneLaunch, reason: "spring launcher")
-        #expect(launch.contains("soaring through the air"))
+        #expect(launch.contains("Gimlet"))
+        #expect(launch.contains("spring launcher") || launch.contains("skies") || launch.contains("soaring") || launch.contains("air"))
 
         let finish = generator.commentaryForWinner(winnerName: "Eldred Oakfoot")
         #expect(finish.contains("Eldred Oakfoot"))

@@ -1,0 +1,214 @@
+[
+  {
+    "id": "course_garden_grand_prix",
+    "name": "Garden Grand Prix",
+    "description": "The classic backyard garden loop featuring lush manicured lawns, a treacherous flowerbed mud pit, patio stone straightaways, and sprinkler jumps.",
+    "totalDistanceMeters": 300.0,
+    "surfaceZones": [
+      {
+        "startMeter": 0.0,
+        "endMeter": 80.0,
+        "surfaceType": "grass",
+        "speedMultiplier": 1.0,
+        "slipRiskPerTick": 0.001
+      },
+      {
+        "startMeter": 80.0,
+        "endMeter": 160.0,
+        "surfaceType": "mud",
+        "speedMultiplier": 0.65,
+        "slipRiskPerTick": 0.015
+      },
+      {
+        "startMeter": 160.0,
+        "endMeter": 240.0,
+        "surfaceType": "stone",
+        "speedMultiplier": 1.15,
+        "slipRiskPerTick": 0.003
+      },
+      {
+        "startMeter": 240.0,
+        "endMeter": 300.0,
+        "surfaceType": "grass",
+        "speedMultiplier": 1.0,
+        "slipRiskPerTick": 0.001
+      }
+    ],
+    "obstacleZones": [
+      {
+        "id": "obs_ggp_spring_1",
+        "locationMeter": 60.0,
+        "triggerRadiusMeters": 3.0,
+        "obstacleType": "springLauncher",
+        "baseTriggerChance": 0.45
+      },
+      {
+        "id": "obs_ggp_mud_1",
+        "locationMeter": 110.0,
+        "triggerRadiusMeters": 4.0,
+        "obstacleType": "mudPuddle",
+        "baseTriggerChance": 0.6
+      },
+      {
+        "id": "obs_ggp_sprinkler_1",
+        "locationMeter": 200.0,
+        "triggerRadiusMeters": 5.0,
+        "obstacleType": "waterSprinkler",
+        "baseTriggerChance": 0.5
+      },
+      {
+        "id": "obs_ggp_molehill_1",
+        "locationMeter": 260.0,
+        "triggerRadiusMeters": 3.5,
+        "obstacleType": "moleHill",
+        "baseTriggerChance": 0.4
+      }
+    ]
+  },
+  {
+    "id": "course_allotment_derby",
+    "name": "Allotment Derby",
+    "description": "A grueling stamina-sapping endurance run through overgrown compost mulch beds, leaking irrigation hoses, greenhouse pavers, and wheelbarrow ramps.",
+    "totalDistanceMeters": 350.0,
+    "surfaceZones": [
+      {
+        "startMeter": 0.0,
+        "endMeter": 70.0,
+        "surfaceType": "grass",
+        "speedMultiplier": 1.0,
+        "slipRiskPerTick": 0.001
+      },
+      {
+        "startMeter": 70.0,
+        "endMeter": 180.0,
+        "surfaceType": "mud",
+        "speedMultiplier": 0.6,
+        "slipRiskPerTick": 0.02
+      },
+      {
+        "startMeter": 180.0,
+        "endMeter": 250.0,
+        "surfaceType": "water",
+        "speedMultiplier": 0.5,
+        "slipRiskPerTick": 0.025
+      },
+      {
+        "startMeter": 250.0,
+        "endMeter": 310.0,
+        "surfaceType": "stone",
+        "speedMultiplier": 1.1,
+        "slipRiskPerTick": 0.004
+      },
+      {
+        "startMeter": 310.0,
+        "endMeter": 350.0,
+        "surfaceType": "grass",
+        "speedMultiplier": 1.0,
+        "slipRiskPerTick": 0.001
+      }
+    ],
+    "obstacleZones": [
+      {
+        "id": "obs_ad_hedge_1",
+        "locationMeter": 50.0,
+        "triggerRadiusMeters": 3.0,
+        "obstacleType": "lowHedge",
+        "baseTriggerChance": 0.5
+      },
+      {
+        "id": "obs_ad_mud_1",
+        "locationMeter": 120.0,
+        "triggerRadiusMeters": 4.0,
+        "obstacleType": "mudPuddle",
+        "baseTriggerChance": 0.65
+      },
+      {
+        "id": "obs_ad_molehill_1",
+        "locationMeter": 160.0,
+        "triggerRadiusMeters": 3.0,
+        "obstacleType": "moleHill",
+        "baseTriggerChance": 0.45
+      },
+      {
+        "id": "obs_ad_sprinkler_1",
+        "locationMeter": 220.0,
+        "triggerRadiusMeters": 6.0,
+        "obstacleType": "waterSprinkler",
+        "baseTriggerChance": 0.55
+      },
+      {
+        "id": "obs_ad_spring_1",
+        "locationMeter": 290.0,
+        "triggerRadiusMeters": 3.5,
+        "obstacleType": "springLauncher",
+        "baseTriggerChance": 0.4
+      }
+    ]
+  },
+  {
+    "id": "course_rockery_rally",
+    "name": "Rockery Rally",
+    "description": "A high-speed technical descent down steep slate rock gardens with mossy edges, tight hairpin gravel corners, and double spring launcher kickers.",
+    "totalDistanceMeters": 250.0,
+    "surfaceZones": [
+      {
+        "startMeter": 0.0,
+        "endMeter": 50.0,
+        "surfaceType": "stone",
+        "speedMultiplier": 1.15,
+        "slipRiskPerTick": 0.005
+      },
+      {
+        "startMeter": 50.0,
+        "endMeter": 140.0,
+        "surfaceType": "grass",
+        "speedMultiplier": 0.95,
+        "slipRiskPerTick": 0.008
+      },
+      {
+        "startMeter": 140.0,
+        "endMeter": 210.0,
+        "surfaceType": "stone",
+        "speedMultiplier": 1.2,
+        "slipRiskPerTick": 0.012
+      },
+      {
+        "startMeter": 210.0,
+        "endMeter": 250.0,
+        "surfaceType": "grass",
+        "speedMultiplier": 1.0,
+        "slipRiskPerTick": 0.002
+      }
+    ],
+    "obstacleZones": [
+      {
+        "id": "obs_rr_spring_1",
+        "locationMeter": 40.0,
+        "triggerRadiusMeters": 3.0,
+        "obstacleType": "springLauncher",
+        "baseTriggerChance": 0.45
+      },
+      {
+        "id": "obs_rr_hedge_1",
+        "locationMeter": 95.0,
+        "triggerRadiusMeters": 3.5,
+        "obstacleType": "lowHedge",
+        "baseTriggerChance": 0.5
+      },
+      {
+        "id": "obs_rr_spring_2",
+        "locationMeter": 150.0,
+        "triggerRadiusMeters": 3.0,
+        "obstacleType": "springLauncher",
+        "baseTriggerChance": 0.5
+      },
+      {
+        "id": "obs_rr_molehill_1",
+        "locationMeter": 185.0,
+        "triggerRadiusMeters": 3.0,
+        "obstacleType": "moleHill",
+        "baseTriggerChance": 0.45
+      }
+    ]
+  }
+]

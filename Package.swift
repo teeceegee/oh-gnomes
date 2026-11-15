@@ -22,7 +22,8 @@ let package = Package(
     targets: [
         .target(
             name: "GnomesCore",
-            dependencies: []
+            dependencies: [],
+            resources: [.process("Resources")]
         ),
         .target(
             name: "GnomesContracts",
@@ -90,6 +91,10 @@ let package = Package(
         .testTarget(
             name: "GnomesAudioTests",
             dependencies: ["GnomesAudio", "GnomesCore", "GnomesSimulation"]
+        ),
+        .testTarget(
+            name: "ContentTests",
+            dependencies: ["GnomesCore", "GnomesSimulation", "GnomesAudio"]
         ),
     ]
 )

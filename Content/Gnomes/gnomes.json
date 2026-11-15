@@ -1,0 +1,1478 @@
+[
+  {
+    "id": "gnome_01",
+    "name": "Barnaby Beardwhisper",
+    "archetype": "Tactical Veteran",
+    "portraitAsset": "portraits/gnome_01.svg",
+    "biography": "A garden veteran who studies soil composition before every heat.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      },
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.72,
+      "acceleration": 0.78,
+      "stamina": 0.85,
+      "balance": 0.75,
+      "recovery": 0.7
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_02",
+    "name": "Sir Reginald Twigbottom",
+    "archetype": "Aristocratic Strider",
+    "portraitAsset": "portraits/gnome_02.svg",
+    "biography": "Believes running is for peasants, but insists on winning anyway.",
+    "traits": [
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.68,
+      "acceleration": 0.62,
+      "stamina": 0.88,
+      "balance": 0.8,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_03",
+    "name": "Bumble Underfoot",
+    "archetype": "Stumble Merchant",
+    "portraitAsset": "portraits/gnome_03.svg",
+    "biography": "His boots are two sizes too large, causing spectacular comedy spills.",
+    "traits": [
+      {
+        "id": "trait_slip_prone",
+        "displayName": "Butterfingers",
+        "description": "Prone to comical slips on wet surfaces.",
+        "effectCategory": "slipProne"
+      },
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.75,
+      "acceleration": 0.8,
+      "stamina": 0.6,
+      "balance": 0.35,
+      "recovery": 0.9
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_04",
+    "name": "Gnorman The Boulder",
+    "archetype": "Heavy Brawler",
+    "portraitAsset": "portraits/gnome_04.svg",
+    "biography": "Weighs as much as a terracotta birdbath; completely unmoveable in a collision.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.6,
+      "acceleration": 0.5,
+      "stamina": 0.95,
+      "balance": 0.9,
+      "recovery": 0.65
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_05",
+    "name": "Lord Pipsqueak",
+    "archetype": "Featherweight Daredevil",
+    "portraitAsset": "portraits/gnome_05.svg",
+    "biography": "Light as a dried dandelion leaf; catches maximum air off spring traps.",
+    "traits": [
+      {
+        "id": "trait_springer",
+        "displayName": "Spring Launcher Ace",
+        "description": "Master of mechanical spring traps, launching further with less crash risk.",
+        "effectCategory": "obstacleSpringer"
+      },
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.88,
+      "acceleration": 0.92,
+      "stamina": 0.55,
+      "balance": 0.45,
+      "recovery": 0.6
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_06",
+    "name": "Bramble McTwitch",
+    "archetype": "Nervous Sprinter",
+    "portraitAsset": "portraits/gnome_06.svg",
+    "biography": "Starts running before the gun even fires out of sheer skittishness.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      },
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.85,
+      "acceleration": 0.9,
+      "stamina": 0.5,
+      "balance": 0.5,
+      "recovery": 0.7
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_07",
+    "name": "Sergeant Mossy",
+    "archetype": "Drill Sergeant",
+    "portraitAsset": "portraits/gnome_07.svg",
+    "biography": "Marches through mud and sprinklers with rigid discipline.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      },
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.66,
+      "acceleration": 0.65,
+      "stamina": 0.9,
+      "balance": 0.85,
+      "recovery": 0.8
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_08",
+    "name": "Finneas Feathercap",
+    "archetype": "Showboat",
+    "portraitAsset": "portraits/gnome_08.svg",
+    "biography": "Spends more time tipping his hat to spectators than watching the track.",
+    "traits": [
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.78,
+      "acceleration": 0.74,
+      "stamina": 0.7,
+      "balance": 0.6,
+      "recovery": 0.7
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_09",
+    "name": "Jasper Cobblestone",
+    "archetype": "Stone Crusher",
+    "portraitAsset": "portraits/gnome_09.svg",
+    "biography": "His stone-carved boots provide unbeatable traction on patio pavers.",
+    "traits": [
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.7,
+      "acceleration": 0.68,
+      "stamina": 0.82,
+      "balance": 0.85,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_10",
+    "name": "Eldred Oakfoot",
+    "archetype": "Endurance Legend",
+    "portraitAsset": "portraits/gnome_10.svg",
+    "biography": "Never stops, never slows down, never blinks.",
+    "traits": [
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.65,
+      "acceleration": 0.6,
+      "stamina": 0.98,
+      "balance": 0.85,
+      "recovery": 0.85
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_11",
+    "name": "Cedric Snailchaser",
+    "archetype": "Patient Stalker",
+    "portraitAsset": "portraits/gnome_11.svg",
+    "biography": "Trained against garden slugs for ruthless stalking pace.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.64,
+      "acceleration": 0.58,
+      "stamina": 0.92,
+      "balance": 0.8,
+      "recovery": 0.8
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_12",
+    "name": "Bartholomew Bogtrot",
+    "archetype": "Swamp Dweller",
+    "portraitAsset": "portraits/gnome_12.svg",
+    "biography": "Feels most alive when submerged knee-deep in thick garden compost.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.62,
+      "acceleration": 0.6,
+      "stamina": 0.85,
+      "balance": 0.88,
+      "recovery": 0.85
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_13",
+    "name": "Archibald Nitro Sprout",
+    "archetype": "Speed Demon",
+    "portraitAsset": "portraits/gnome_13.svg",
+    "biography": "Fueled by high-potency organic tomato fertilizer.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.94,
+      "acceleration": 0.95,
+      "stamina": 0.45,
+      "balance": 0.4,
+      "recovery": 0.55
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_14",
+    "name": "Titus Dandelion",
+    "archetype": "Wind Rider",
+    "portraitAsset": "portraits/gnome_14.svg",
+    "biography": "Drifts across the grass like an airborne seed pod.",
+    "traits": [
+      {
+        "id": "trait_springer",
+        "displayName": "Spring Launcher Ace",
+        "description": "Master of mechanical spring traps, launching further with less crash risk.",
+        "effectCategory": "obstacleSpringer"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.8,
+      "acceleration": 0.82,
+      "stamina": 0.68,
+      "balance": 0.55,
+      "recovery": 0.7
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_15",
+    "name": "Percival Pebble",
+    "archetype": "Stubborn Rock",
+    "portraitAsset": "portraits/gnome_15.svg",
+    "biography": "Short, round, and obstinate. Refuses to yield an inch of lane space.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.63,
+      "acceleration": 0.55,
+      "stamina": 0.92,
+      "balance": 0.9,
+      "recovery": 0.8
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_16",
+    "name": "Tobias Tumbleweed",
+    "archetype": "Acrobatic Tumbler",
+    "portraitAsset": "portraits/gnome_16.svg",
+    "biography": "Has turned tumbling end-over-end into a legitimate racing style.",
+    "traits": [
+      {
+        "id": "trait_slip_prone",
+        "displayName": "Butterfingers",
+        "description": "Prone to comical slips on wet surfaces.",
+        "effectCategory": "slipProne"
+      },
+      {
+        "id": "trait_springer",
+        "displayName": "Spring Launcher Ace",
+        "description": "Master of mechanical spring traps, launching further with less crash risk.",
+        "effectCategory": "obstacleSpringer"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.76,
+      "acceleration": 0.75,
+      "stamina": 0.65,
+      "balance": 0.38,
+      "recovery": 0.95
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_17",
+    "name": "Barnaby Boggart",
+    "archetype": "Trickster",
+    "portraitAsset": "portraits/gnome_17.svg",
+    "biography": "Known for sneaking greased cabbage leaves under rivals' boots.",
+    "traits": [
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.74,
+      "acceleration": 0.78,
+      "stamina": 0.72,
+      "balance": 0.65,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_18",
+    "name": "Roderick Rustyspade",
+    "archetype": "Excavator",
+    "portraitAsset": "portraits/gnome_18.svg",
+    "biography": "Wields an antique trowel like a rudder for high-speed cornering.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.69,
+      "acceleration": 0.7,
+      "stamina": 0.78,
+      "balance": 0.75,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_19",
+    "name": "Humphrey Hopsack",
+    "archetype": "Bouncy Sprinter",
+    "portraitAsset": "portraits/gnome_19.svg",
+    "biography": "Leaps rhythmically across garden pavers with unnerving enthusiasm.",
+    "traits": [
+      {
+        "id": "trait_springer",
+        "displayName": "Spring Launcher Ace",
+        "description": "Master of mechanical spring traps, launching further with less crash risk.",
+        "effectCategory": "obstacleSpringer"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.82,
+      "acceleration": 0.85,
+      "stamina": 0.62,
+      "balance": 0.58,
+      "recovery": 0.7
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_20",
+    "name": "Gilbert Gherkin",
+    "archetype": "Pickled Runner",
+    "portraitAsset": "portraits/gnome_20.svg",
+    "biography": "Preserved in cider vinegar and competitive spite.",
+    "traits": [
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.71,
+      "acceleration": 0.7,
+      "stamina": 0.8,
+      "balance": 0.72,
+      "recovery": 0.8
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_21",
+    "name": "Oswald Oakenbarrel",
+    "archetype": "Heavyweight Anchor",
+    "portraitAsset": "portraits/gnome_21.svg",
+    "biography": "Rolls forward with unstoppable momentum.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.61,
+      "acceleration": 0.52,
+      "stamina": 0.96,
+      "balance": 0.92,
+      "recovery": 0.7
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_22",
+    "name": "Cornelius Compost",
+    "archetype": "Organic Chemist",
+    "portraitAsset": "portraits/gnome_22.svg",
+    "biography": "Draws uncanny stamina from decomposing mulch beds.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      },
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.67,
+      "acceleration": 0.65,
+      "stamina": 0.89,
+      "balance": 0.8,
+      "recovery": 0.78
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_23",
+    "name": "Montgomery Mudflap",
+    "archetype": "Mudguard Specialist",
+    "portraitAsset": "portraits/gnome_23.svg",
+    "biography": "Equipped with custom clay mudguards over his knee socks.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.7,
+      "acceleration": 0.72,
+      "stamina": 0.82,
+      "balance": 0.78,
+      "recovery": 0.82
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_24",
+    "name": "Alistair Acorn",
+    "archetype": "Nutty Dasher",
+    "portraitAsset": "portraits/gnome_24.svg",
+    "biography": "Bounces wildly off garden borders with unpredictable trajectory.",
+    "traits": [
+      {
+        "id": "trait_springer",
+        "displayName": "Spring Launcher Ace",
+        "description": "Master of mechanical spring traps, launching further with less crash risk.",
+        "effectCategory": "obstacleSpringer"
+      },
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.84,
+      "acceleration": 0.86,
+      "stamina": 0.58,
+      "balance": 0.48,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_25",
+    "name": "Thaddeus Thimble",
+    "archetype": "Pocket Rocket",
+    "portraitAsset": "portraits/gnome_25.svg",
+    "biography": "Diminutive stature allows him to slip underneath low hedges effortlessly.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.89,
+      "acceleration": 0.91,
+      "stamina": 0.52,
+      "balance": 0.5,
+      "recovery": 0.65
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_26",
+    "name": "Ignatius Ivy",
+    "archetype": "Climber",
+    "portraitAsset": "portraits/gnome_26.svg",
+    "biography": "Roots himself to the surface with uncanny balance and grip.",
+    "traits": [
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.68,
+      "acceleration": 0.66,
+      "stamina": 0.86,
+      "balance": 0.95,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_27",
+    "name": "Rupert Rootbound",
+    "archetype": "Grounded Veteran",
+    "portraitAsset": "portraits/gnome_27.svg",
+    "biography": "Slow to accelerate, but immovable once he reaches cruising speed.",
+    "traits": [
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.63,
+      "acceleration": 0.54,
+      "stamina": 0.94,
+      "balance": 0.9,
+      "recovery": 0.8
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_28",
+    "name": "Sterling Sunhat",
+    "archetype": "Summer Specialist",
+    "portraitAsset": "portraits/gnome_28.svg",
+    "biography": "Wears an oversized straw hat that doubles as a parachute in high winds.",
+    "traits": [
+      {
+        "id": "trait_springer",
+        "displayName": "Spring Launcher Ace",
+        "description": "Master of mechanical spring traps, launching further with less crash risk.",
+        "effectCategory": "obstacleSpringer"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.77,
+      "acceleration": 0.76,
+      "stamina": 0.7,
+      "balance": 0.62,
+      "recovery": 0.7
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_29",
+    "name": "Wilfred Wormwood",
+    "archetype": "Herbalist",
+    "portraitAsset": "portraits/gnome_29.svg",
+    "biography": "Sips bitter wormwood tonic before races for peak adrenaline.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      },
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.83,
+      "acceleration": 0.88,
+      "stamina": 0.6,
+      "balance": 0.52,
+      "recovery": 0.68
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_30",
+    "name": "Felix Fernwhistle",
+    "archetype": "Whistler",
+    "portraitAsset": "portraits/gnome_30.svg",
+    "biography": "Whistles jaunty sea shanties that distract and infuriate nearby gnomes.",
+    "traits": [
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.75,
+      "acceleration": 0.74,
+      "stamina": 0.75,
+      "balance": 0.7,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_31",
+    "name": "Bertram Buttercup",
+    "archetype": "Sunny Optimist",
+    "portraitAsset": "portraits/gnome_31.svg",
+    "biography": "Smiles radiantly even while face-planting into wet compost.",
+    "traits": [
+      {
+        "id": "trait_slip_prone",
+        "displayName": "Butterfingers",
+        "description": "Prone to comical slips on wet surfaces.",
+        "effectCategory": "slipProne"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.73,
+      "acceleration": 0.75,
+      "stamina": 0.68,
+      "balance": 0.42,
+      "recovery": 0.92
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_32",
+    "name": "Horatio Hedgeclipper",
+    "archetype": "Precision Runner",
+    "portraitAsset": "portraits/gnome_32.svg",
+    "biography": "Navigates tight turns within millimeters of garden borders.",
+    "traits": [
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.72,
+      "acceleration": 0.75,
+      "stamina": 0.78,
+      "balance": 0.85,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_33",
+    "name": "Gideon Gravelgait",
+    "archetype": "All-Terrain Grinder",
+    "portraitAsset": "portraits/gnome_33.svg",
+    "biography": "Crushes coarse pea-gravel into dust with heavy iron soles.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.68,
+      "acceleration": 0.65,
+      "stamina": 0.87,
+      "balance": 0.88,
+      "recovery": 0.8
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_34",
+    "name": "Leopold Lawnkeeper",
+    "archetype": "Turf Perfectionist",
+    "portraitAsset": "portraits/gnome_34.svg",
+    "biography": "Can sense subtle blade inclinations on manicured Kentucky bluegrass.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.79,
+      "acceleration": 0.82,
+      "stamina": 0.72,
+      "balance": 0.76,
+      "recovery": 0.72
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_35",
+    "name": "Sylvester Shovelworth",
+    "archetype": "Groundskeeper",
+    "portraitAsset": "portraits/gnome_35.svg",
+    "biography": "Digs in deep on muddy gradients; tough as an oak spade handle.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.66,
+      "acceleration": 0.62,
+      "stamina": 0.91,
+      "balance": 0.86,
+      "recovery": 0.82
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_36",
+    "name": "Valentine Volecatcher",
+    "archetype": "Predator Pace",
+    "portraitAsset": "portraits/gnome_36.svg",
+    "biography": "Chases the finish line like a terrier pursuing a field mouse.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      },
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.81,
+      "acceleration": 0.85,
+      "stamina": 0.76,
+      "balance": 0.68,
+      "recovery": 0.7
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_37",
+    "name": "Walter Wheelbarrow",
+    "archetype": "Freight Hauler",
+    "portraitAsset": "portraits/gnome_37.svg",
+    "biography": "Built like an iron garden cart; slow start but massive freight-train pace.",
+    "traits": [
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.62,
+      "acceleration": 0.48,
+      "stamina": 0.97,
+      "balance": 0.92,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_38",
+    "name": "Zachary Zucchini",
+    "archetype": "Prize Winner",
+    "portraitAsset": "portraits/gnome_38.svg",
+    "biography": "Prize-winning girth; hogs the entire width of lane four.",
+    "traits": [
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.64,
+      "acceleration": 0.58,
+      "stamina": 0.88,
+      "balance": 0.8,
+      "recovery": 0.78
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_39",
+    "name": "Ambrose Applecheek",
+    "archetype": "Cheery Cherub",
+    "portraitAsset": "portraits/gnome_39.svg",
+    "biography": "Rosy-cheeked innocent who somehow escapes every pileup unscathed.",
+    "traits": [
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.74,
+      "acceleration": 0.72,
+      "stamina": 0.74,
+      "balance": 0.72,
+      "recovery": 0.85
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_40",
+    "name": "Barnaby Bushytail",
+    "archetype": "Forest Scout",
+    "portraitAsset": "portraits/gnome_40.svg",
+    "biography": "Agile as a squirrel; darts between obstacles with effortless grace.",
+    "traits": [
+      {
+        "id": "trait_springer",
+        "displayName": "Spring Launcher Ace",
+        "description": "Master of mechanical spring traps, launching further with less crash risk.",
+        "effectCategory": "obstacleSpringer"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.86,
+      "acceleration": 0.89,
+      "stamina": 0.6,
+      "balance": 0.65,
+      "recovery": 0.75
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_41",
+    "name": "Clement Claypot",
+    "archetype": "Fragile Rusher",
+    "portraitAsset": "portraits/gnome_41.svg",
+    "biography": "Terrified of breaking his terracotta shell, sprints with frantic urgency.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      },
+      {
+        "id": "trait_slip_prone",
+        "displayName": "Butterfingers",
+        "description": "Prone to comical slips on wet surfaces.",
+        "effectCategory": "slipProne"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.91,
+      "acceleration": 0.93,
+      "stamina": 0.48,
+      "balance": 0.38,
+      "recovery": 0.6
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_42",
+    "name": "Douglas Dewdrop",
+    "archetype": "Morning Sprinter",
+    "portraitAsset": "portraits/gnome_42.svg",
+    "biography": "Runs best at sunrise when the grass is slick with fresh dew.",
+    "traits": [
+      {
+        "id": "trait_slip_prone",
+        "displayName": "Butterfingers",
+        "description": "Prone to comical slips on wet surfaces.",
+        "effectCategory": "slipProne"
+      },
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.85,
+      "acceleration": 0.88,
+      "stamina": 0.58,
+      "balance": 0.46,
+      "recovery": 0.7
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_43",
+    "name": "Edmund Evermoss",
+    "archetype": "Ancient Hermit",
+    "portraitAsset": "portraits/gnome_43.svg",
+    "biography": "Has inhabited the rockery since 1887; knows every loose stone.",
+    "traits": [
+      {
+        "id": "trait_mud_lover",
+        "displayName": "Mud Lover",
+        "description": "Thrives in muddy bog; suffers minimal speed penalty on mud.",
+        "effectCategory": "mudAffinity"
+      },
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.64,
+      "acceleration": 0.58,
+      "stamina": 0.95,
+      "balance": 0.92,
+      "recovery": 0.85
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_44",
+    "name": "Franklin Foxglove",
+    "archetype": "Poisonous Pace",
+    "portraitAsset": "portraits/gnome_44.svg",
+    "biography": "Blinds opponents with dazzling floral colors and sharp cutbacks.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.82,
+      "acceleration": 0.84,
+      "stamina": 0.7,
+      "balance": 0.66,
+      "recovery": 0.72
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_45",
+    "name": "Gregory Gooseberry",
+    "archetype": "Sour Veteran",
+    "portraitAsset": "portraits/gnome_45.svg",
+    "biography": "Bitter disposition makes him run faster out of pure spite.",
+    "traits": [
+      {
+        "id": "trait_finisher",
+        "displayName": "Stamina Surge",
+        "description": "Gains extra endurance and a late sprint boost in the final 50 meters.",
+        "effectCategory": "staminaSurge"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.73,
+      "acceleration": 0.72,
+      "stamina": 0.81,
+      "balance": 0.76,
+      "recovery": 0.78
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_46",
+    "name": "Harold Honeydew",
+    "archetype": "Sweet Glider",
+    "portraitAsset": "portraits/gnome_46.svg",
+    "biography": "Glides smoothly across patio stone with effortless glide.",
+    "traits": [
+      {
+        "id": "trait_springer",
+        "displayName": "Spring Launcher Ace",
+        "description": "Master of mechanical spring traps, launching further with less crash risk.",
+        "effectCategory": "obstacleSpringer"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.78,
+      "acceleration": 0.8,
+      "stamina": 0.72,
+      "balance": 0.68,
+      "recovery": 0.74
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_47",
+    "name": "Isaac Iris",
+    "archetype": "Showstopper",
+    "portraitAsset": "portraits/gnome_47.svg",
+    "biography": "Tall, elegant, and surprisingly swift in wide open stretches.",
+    "traits": [
+      {
+        "id": "trait_sprinter",
+        "displayName": "Sprinter",
+        "description": "Explosive start and rapid acceleration out of the gate.",
+        "effectCategory": "startBoost"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.8,
+      "acceleration": 0.82,
+      "stamina": 0.74,
+      "balance": 0.64,
+      "recovery": 0.72
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  },
+  {
+    "id": "gnome_48",
+    "name": "Jonathan Junebug",
+    "archetype": "Erratic Flutterer",
+    "portraitAsset": "portraits/gnome_48.svg",
+    "biography": "Changes direction like an intoxicated beetle, confounding all odds.",
+    "traits": [
+      {
+        "id": "trait_chaos",
+        "displayName": "Chaos Magnet",
+        "description": "Inexplicably attracts collisions, sprinkler blasts, and wild incidents.",
+        "effectCategory": "chaosMagnet"
+      },
+      {
+        "id": "trait_springer",
+        "displayName": "Spring Launcher Ace",
+        "description": "Master of mechanical spring traps, launching further with less crash risk.",
+        "effectCategory": "obstacleSpringer"
+      }
+    ],
+    "baselineAttributes": {
+      "speed": 0.83,
+      "acceleration": 0.85,
+      "stamina": 0.62,
+      "balance": 0.44,
+      "recovery": 0.8
+    },
+    "career": {
+      "racesRun": 0,
+      "wins": 0,
+      "podiums": 0,
+      "incidentsEncountered": 0,
+      "formRating": 0.0
+    }
+  }
+]

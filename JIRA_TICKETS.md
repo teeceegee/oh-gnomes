@@ -321,10 +321,10 @@
 | [EVD-289](https://echopost.atlassian.net/browse/EVD-289) | Subtask | **Done** | Medium | EVD-287 | Implement custom Metal particle shaders (mud splatters, dust clouds, water wakes) |
 | [EVD-290](https://echopost.atlassian.net/browse/EVD-290) | Subtask | **Done** | Medium | EVD-287 | Build AVFoundation neural voice commentary engine (AVSpeechSynthesizer) and spatial audio |
 | [EVD-291](https://echopost.atlassian.net/browse/EVD-291) | Subtask | **Done** | Medium | EVD-287 | Create photo-finish freeze-frame replay and championship finale presentation |
-| [EVD-292](https://echopost.atlassian.net/browse/EVD-292) | Story | **To Do** | Medium | EVD-262 | M6: Content Authoring (48 Gnomes, 3 Courses & Commentary Cues) |
-| [EVD-293](https://echopost.atlassian.net/browse/EVD-293) | Subtask | **To Do** | Medium | EVD-292 | Author 48 persistent gnome character bios, trait stats, and SVG portrait assets |
-| [EVD-294](https://echopost.atlassian.net/browse/EVD-294) | Subtask | **To Do** | Medium | EVD-292 | Author 3 course route graphs (Garden Grand Prix, Allotment Derby, Rockery Rally) |
-| [EVD-295](https://echopost.atlassian.net/browse/EVD-295) | Subtask | **To Do** | Medium | EVD-292 | Author procedural comedic commentary vocabulary library |
+| [EVD-292](https://echopost.atlassian.net/browse/EVD-292) | Story | **Done** | Medium | EVD-262 | M6: Content Authoring (48 Gnomes, 3 Courses & Commentary Cues) |
+| [EVD-293](https://echopost.atlassian.net/browse/EVD-293) | Subtask | **Done** | Medium | EVD-292 | Author 48 persistent gnome character bios, trait stats, and SVG portrait assets |
+| [EVD-294](https://echopost.atlassian.net/browse/EVD-294) | Subtask | **Done** | Medium | EVD-292 | Author 3 course route graphs (Garden Grand Prix, Allotment Derby, Rockery Rally) |
+| [EVD-295](https://echopost.atlassian.net/browse/EVD-295) | Subtask | **Done** | Medium | EVD-292 | Author procedural comedic commentary vocabulary library |
 | [EVD-296](https://echopost.atlassian.net/browse/EVD-296) | Story | **To Do** | Medium | EVD-262 | M7: Hardening, AirPlay Verification & Social Playtest RC |
 | [EVD-297](https://echopost.atlassian.net/browse/EVD-297) | Subtask | **To Do** | Medium | EVD-296 | Execute 20-client concurrent load and reconnection stress testing |
 | [EVD-298](https://echopost.atlassian.net/browse/EVD-298) | Subtask | **To Do** | Medium | EVD-296 | Verify AirPlay screen-mirroring latency, 60fps stability, and audio sync |

@@ -1,0 +1,56 @@
+{
+  "openings": [
+    "And they're off! Eight brave garden gnomes charge across the starting line!",
+    "The clapper drops! They burst away down the green velvet turf!",
+    "Away they go! Pointy hats bristling in the gentle British breeze!",
+    "We are underway at {course}! Watch the field closely, every gnome is hungry for glory!",
+    "The starter pistol sounds and the ceramic athletes leap into action!"
+  ],
+  "overtakes": [
+    "{leader} makes a daring move on the inside paver to pass {chaser}!",
+    "Sensational acceleration! {leader} sweeps past {chaser} into first place!",
+    "Boot to boot! {leader} claims the lead from {chaser}!",
+    "{leader} surges ahead! That is champion pedigree right there!",
+    "{leader} slips through a narrow opening to steal pole position from {chaser}!"
+  ],
+  "stumbles": [
+    "Disaster strikes! {runner} stumbles over a loose dandelion root!",
+    "Oh no! {runner} has lost their footing and taken a right royal tumble!",
+    "Down goes {runner}! A catastrophic loss of ceramic equilibrium!",
+    "{runner} trips over their own oversized buckle and goes skidding across the turf!",
+    "A calamitous wobble! {runner} goes head over heels into the grass!"
+  ],
+  "springLaunchers": [
+    "Good heavens! {runner} hits the spring launcher and takes to the skies!",
+    "Up, up and away! {runner} achieves supersonic gnome altitude!",
+    "Incredible airtime! {runner} catapults over the pack like a ceramic missile!",
+    "A tremendous bounce! {runner} lands squarely back on their boots with glorious momentum!"
+  ],
+  "mudSplashes": [
+    "Direct hit! {runner} plows headfirst into the muddy bog!",
+    "Mud everywhere! {runner}'s pristine white beard is now entirely peat-colored!",
+    "Sludge in the boots! {runner} is bogged down and wading through thick compost!",
+    "A dreadful splash! {runner} takes a face full of wet earth!"
+  ],
+  "sprinklers": [
+    "Incoming irrigation! {runner} gets drenched by the oscillating sprinkler!",
+    "Soaked to the bone! {runner} is spinning in circles from high-pressure water spray!",
+    "A sudden cloudburst! {runner} gets caught in the sprinkler crossfire!"
+  ],
+  "collisions": [
+    "Ouch! {runner} collides heavily with a rival gnome and ricochets sideways!",
+    "Ceramic on ceramic! A bruising encounter in mid-lane for {runner}!",
+    "No quarter asked, none given! {runner} bounces violently off the boundary border!"
+  ],
+  "photoFinishes": [
+    "It's neck and neck! Separated by a whisker of beard hair at the line!",
+    "Too close to call! We are going to the electronic photo finish cameras!",
+    "Incredible drama! They cross the line locked in absolute unison!"
+  ],
+  "winnerCelebrations": [
+    "Glorious victory for {winner}! A masterclass in horticultural athletics!",
+    "{winner} takes the chequered flag and the grand garden championship!",
+    "Unstoppable! {winner} etches their name into gnome racing immortality!",
+    "What a run! {winner} reigns supreme in the garden derby!"
+  ]
+}
