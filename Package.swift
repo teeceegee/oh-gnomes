@@ -48,5 +48,9 @@ let package = Package(
             name: "GnomesContractsTests",
             dependencies: ["GnomesContracts"]
         ),
+        .testTarget(
+            name: "GnomesSimulationTests",
+            dependencies: ["GnomesSimulation", "GnomesCore"]
+        ),
     ]
 )

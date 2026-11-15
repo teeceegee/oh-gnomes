@@ -53,7 +53,11 @@
       - [EVD-266](https://echopost.atlassian.net/browse/EVD-266): *Initialize Swift 6 Package with modular library targets* (Subtask, `Done`)
       - [EVD-267](https://echopost.atlassian.net/browse/EVD-267): *Model core domain entities and state machines in GnomesCore* (Subtask, `Done`)
       - [EVD-268](https://echopost.atlassian.net/browse/EVD-268): *Define JSON schema wire contracts for WebSocket client communication* (Subtask, `Done`)
-    - [EVD-269](https://echopost.atlassian.net/browse/EVD-269): *M1: Deterministic Swift Simulation Engine Prototype* (Story, `To Do`)
+    - [EVD-269](https://echopost.atlassian.net/browse/EVD-269): *M1: Deterministic Swift Simulation Engine Prototype* (Story, `Done`)
+      - [EVD-270](https://echopost.atlassian.net/browse/EVD-270): *Implement deterministic PRNG with named sub-streams in GnomesSimulation* (Subtask, `Done`)
+      - [EVD-271](https://echopost.atlassian.net/browse/EVD-271): *Build 30Hz fixed-tick physics loop, route waypoints, and surface friction models* (Subtask, `Done`)
+      - [EVD-272](https://echopost.atlassian.net/browse/EVD-272): *Implement cartoon incident model (stumbles, launches, surges) with chain-reaction limiters* (Subtask, `Done`)
+      - [EVD-273](https://echopost.atlassian.net/browse/EVD-273): *Create automated 1,000-run replay determinism test suite* (Subtask, `Done`)
     - [EVD-274](https://echopost.atlassian.net/browse/EVD-274): *M2: Integer-Penny Economy, Bookmaker Odds & SQLite Career Persistence* (Story, `To Do`)
     - [EVD-279](https://echopost.atlassian.net/browse/EVD-279): *M3: Embedded WebSocket Gateway & Realtime Session Lifecycle* (Story, `To Do`)
     - [EVD-283](https://echopost.atlassian.net/browse/EVD-283): *M4: Mobile Phone Web Controller (PWA)* (Story, `To Do`)
@@ -69,3 +73,4 @@
 - **2026-11-15:** User confirmed key decisions: (1) Stake + Profit payout convention, (2) Local SQLite persistence for 48-gnome career tracking, and (3) Native Swift 6 + Metal / SpriteKit architecture on **Argolis (Apple Silicon M4)** with AirPlay screen mirroring and embedded WebSocket server for zero-install mobile phone web controllers. Updated implementation plan to Version 2.0.0.
 - **2026-11-15:** Established complete Jira hierarchy under Epic [EVD-262](https://echopost.atlassian.net/browse/EVD-262), generating 8 Milestone Stories (`EVD-265` to `EVD-296`) and 27 actionable Subtasks (`EVD-266` to `EVD-299`). Synchronized registries across workspace `JIRA_TICKETS.md` and master `jira_tickets_map.md`.
 - **2026-11-15:** Completed **Milestone 0 (M0)**: Implemented modular Swift 6 `Package.swift`, authored all domain models in `GnomesCore`, implemented JSON schema wire contracts and Mystery Mode server projection filters in `GnomesContracts`, and executed `swift test` with 7 automated unit tests passing in 0.001s. Closed `EVD-265`, `EVD-266`, `EVD-267`, and `EVD-268` in Jira.
+- **2026-11-15:** Completed **Milestone 1 (M1)**: Implemented `Xoshiro256StarStar` deterministic PRNG with named sub-streams, 30Hz fixed-tick physics simulation engine (`SimulationEngine`), surface friction and obstacle models, and `IncidentLimiter` cascade controls. Passed all 11 test suites including the 1,000-run bit-exact replay determinism verification test in 17.09s. Closed `EVD-269`, `EVD-270`, `EVD-271`, `EVD-272`, and `EVD-273` in Jira.

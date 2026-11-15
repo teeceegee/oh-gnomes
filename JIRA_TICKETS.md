@@ -1,7 +1,7 @@
 # Echopost Master Jira Tickets Registry
 
 * **Instance**: `https://echopost.atlassian.net`
-* **Last Synchronized**: `2026-11-15 12:20:57`
+* **Last Synchronized**: `2026-11-15 12:26:58`
 * **Sync Command**: `jira sync-map` (automatically updated on `create-issue`, `update-issue`, and `transition-issue`)
 
 ---
@@ -298,11 +298,11 @@
 | [EVD-266](https://echopost.atlassian.net/browse/EVD-266) | Subtask | **Done** | Medium | EVD-265 | Initialize Swift 6 Package with modular library targets |
 | [EVD-267](https://echopost.atlassian.net/browse/EVD-267) | Subtask | **Done** | Medium | EVD-265 | Model core domain entities and state machines in GnomesCore |
 | [EVD-268](https://echopost.atlassian.net/browse/EVD-268) | Subtask | **Done** | Medium | EVD-265 | Define JSON schema wire contracts for WebSocket client communication |
-| [EVD-269](https://echopost.atlassian.net/browse/EVD-269) | Story | **To Do** | Medium | EVD-262 | M1: Deterministic Swift Simulation Engine Prototype |
-| [EVD-270](https://echopost.atlassian.net/browse/EVD-270) | Subtask | **To Do** | Medium | EVD-269 | Implement deterministic PRNG with named sub-streams in GnomesSimulation |
-| [EVD-271](https://echopost.atlassian.net/browse/EVD-271) | Subtask | **To Do** | Medium | EVD-269 | Build 30Hz fixed-tick physics loop, route waypoints, and surface friction models |
-| [EVD-272](https://echopost.atlassian.net/browse/EVD-272) | Subtask | **To Do** | Medium | EVD-269 | Implement cartoon incident model (stumbles, launches, surges) with chain-reaction limiters |
-| [EVD-273](https://echopost.atlassian.net/browse/EVD-273) | Subtask | **To Do** | Medium | EVD-269 | Create automated 1,000-run replay determinism test suite |
+| [EVD-269](https://echopost.atlassian.net/browse/EVD-269) | Story | **Done** | Medium | EVD-262 | M1: Deterministic Swift Simulation Engine Prototype |
+| [EVD-270](https://echopost.atlassian.net/browse/EVD-270) | Subtask | **Done** | Medium | EVD-269 | Implement deterministic PRNG with named sub-streams in GnomesSimulation |
+| [EVD-271](https://echopost.atlassian.net/browse/EVD-271) | Subtask | **Done** | Medium | EVD-269 | Build 30Hz fixed-tick physics loop, route waypoints, and surface friction models |
+| [EVD-272](https://echopost.atlassian.net/browse/EVD-272) | Subtask | **Done** | Medium | EVD-269 | Implement cartoon incident model (stumbles, launches, surges) with chain-reaction limiters |
+| [EVD-273](https://echopost.atlassian.net/browse/EVD-273) | Subtask | **Done** | Medium | EVD-269 | Create automated 1,000-run replay determinism test suite |
 | [EVD-274](https://echopost.atlassian.net/browse/EVD-274) | Story | **To Do** | Medium | EVD-262 | M2: Integer-Penny Economy, Bookmaker Odds & SQLite Career Persistence |
 | [EVD-275](https://echopost.atlassian.net/browse/EVD-275) | Subtask | **To Do** | Medium | EVD-274 | Implement integer-penny banking ledger and Stake+Profit payout calculator |
 | [EVD-276](https://echopost.atlassian.net/browse/EVD-276) | Subtask | **To Do** | Medium | EVD-274 | Build explainable bookmaker odds quote engine with trait and weather weighting |
