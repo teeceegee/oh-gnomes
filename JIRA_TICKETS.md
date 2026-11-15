@@ -1,7 +1,7 @@
 # Echopost Master Jira Tickets Registry
 
 * **Instance**: `https://echopost.atlassian.net`
-* **Last Synchronized**: `2026-11-15 12:40:00`
+* **Last Synchronized**: `2026-11-15 13:00:59`
 * **Sync Command**: `jira sync-map` (automatically updated on `create-issue`, `update-issue`, and `transition-issue`)
 
 ---
@@ -308,10 +308,10 @@
 | [EVD-276](https://echopost.atlassian.net/browse/EVD-276) | Subtask | **Done** | Medium | EVD-274 | Build explainable bookmaker odds quote engine with trait and weather weighting |
 | [EVD-277](https://echopost.atlassian.net/browse/EVD-277) | Subtask | **Done** | Medium | EVD-274 | Develop idempotent settlement engine and bounded post-race form decay |
 | [EVD-278](https://echopost.atlassian.net/browse/EVD-278) | Subtask | **Done** | Medium | EVD-274 | Setup SQLite schema and GRDB repository for 48-gnome persistent records |
-| [EVD-279](https://echopost.atlassian.net/browse/EVD-279) | Story | **To Do** | Medium | EVD-262 | M3: Embedded WebSocket Gateway & Realtime Session Lifecycle |
-| [EVD-280](https://echopost.atlassian.net/browse/EVD-280) | Subtask | **To Do** | Medium | EVD-279 | Integrate embedded HTTP & WebSocket server (FlyingFox) on port 8778 |
-| [EVD-281](https://echopost.atlassian.net/browse/EVD-281) | Subtask | **To Do** | Medium | EVD-279 | Implement session lifecycle state machine (Lobby to Finale) and 20-Gnome Gem allocator |
-| [EVD-282](https://echopost.atlassian.net/browse/EVD-282) | Subtask | **To Do** | Medium | EVD-279 | Build client reconnection token protocol and server-side Mystery Mode projection filtering |
+| [EVD-279](https://echopost.atlassian.net/browse/EVD-279) | Story | **Done** | Medium | EVD-262 | M3: Embedded WebSocket Gateway & Realtime Session Lifecycle |
+| [EVD-280](https://echopost.atlassian.net/browse/EVD-280) | Subtask | **Done** | Medium | EVD-279 | Integrate embedded HTTP & WebSocket server (FlyingFox) on port 8778 |
+| [EVD-281](https://echopost.atlassian.net/browse/EVD-281) | Subtask | **Done** | Medium | EVD-279 | Implement session lifecycle state machine (Lobby to Finale) and 20-Gnome Gem allocator |
+| [EVD-282](https://echopost.atlassian.net/browse/EVD-282) | Subtask | **Done** | Medium | EVD-279 | Build client reconnection token protocol and server-side Mystery Mode projection filtering |
 | [EVD-283](https://echopost.atlassian.net/browse/EVD-283) | Story | **To Do** | Medium | EVD-262 | M4: Mobile Phone Web Controller (PWA) |
 | [EVD-284](https://echopost.atlassian.net/browse/EVD-284) | Subtask | **To Do** | Medium | EVD-283 | Build mobile web card carousel (portrait, bio, traits, form, odds) |
 | [EVD-285](https://echopost.atlassian.net/browse/EVD-285) | Subtask | **To Do** | Medium | EVD-283 | Implement touch-friendly stake selector (£1 to balance) and immutable bet receipt |
