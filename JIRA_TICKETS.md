@@ -1,7 +1,7 @@
 # Echopost Master Jira Tickets Registry
 
 * **Instance**: `https://echopost.atlassian.net`
-* **Last Synchronized**: `2026-11-15 13:09:05`
+* **Last Synchronized**: `2026-11-15 13:13:10`
 * **Sync Command**: `jira sync-map` (automatically updated on `create-issue`, `update-issue`, and `transition-issue`)
 
 ---
@@ -316,11 +316,11 @@
 | [EVD-284](https://echopost.atlassian.net/browse/EVD-284) | Subtask | **Done** | Medium | EVD-283 | Build mobile web card carousel (portrait, bio, traits, form, odds) |
 | [EVD-285](https://echopost.atlassian.net/browse/EVD-285) | Subtask | **Done** | Medium | EVD-283 | Implement touch-friendly stake selector (£1 to balance) and immutable bet receipt |
 | [EVD-286](https://echopost.atlassian.net/browse/EVD-286) | Subtask | **Done** | Medium | EVD-283 | Build live race progress tracker and personal settlement notifications for phones |
-| [EVD-287](https://echopost.atlassian.net/browse/EVD-287) | Story | **To Do** | Medium | EVD-262 | M5: Metal Broadcast Presentation & Neural Voice Commentary |
-| [EVD-288](https://echopost.atlassian.net/browse/EVD-288) | Subtask | **To Do** | Medium | EVD-287 | Develop 1080p 60fps SpriteKit/Metal racetrack scene, camera director, and floating Gnome Gems |
-| [EVD-289](https://echopost.atlassian.net/browse/EVD-289) | Subtask | **To Do** | Medium | EVD-287 | Implement custom Metal particle shaders (mud splatters, dust clouds, water wakes) |
-| [EVD-290](https://echopost.atlassian.net/browse/EVD-290) | Subtask | **To Do** | Medium | EVD-287 | Build AVFoundation neural voice commentary engine (AVSpeechSynthesizer) and spatial audio |
-| [EVD-291](https://echopost.atlassian.net/browse/EVD-291) | Subtask | **To Do** | Medium | EVD-287 | Create photo-finish freeze-frame replay and championship finale presentation |
+| [EVD-287](https://echopost.atlassian.net/browse/EVD-287) | Story | **Done** | Medium | EVD-262 | M5: Metal Broadcast Presentation & Neural Voice Commentary |
+| [EVD-288](https://echopost.atlassian.net/browse/EVD-288) | Subtask | **Done** | Medium | EVD-287 | Develop 1080p 60fps SpriteKit/Metal racetrack scene, camera director, and floating Gnome Gems |
+| [EVD-289](https://echopost.atlassian.net/browse/EVD-289) | Subtask | **Done** | Medium | EVD-287 | Implement custom Metal particle shaders (mud splatters, dust clouds, water wakes) |
+| [EVD-290](https://echopost.atlassian.net/browse/EVD-290) | Subtask | **Done** | Medium | EVD-287 | Build AVFoundation neural voice commentary engine (AVSpeechSynthesizer) and spatial audio |
+| [EVD-291](https://echopost.atlassian.net/browse/EVD-291) | Subtask | **Done** | Medium | EVD-287 | Create photo-finish freeze-frame replay and championship finale presentation |
 | [EVD-292](https://echopost.atlassian.net/browse/EVD-292) | Story | **To Do** | Medium | EVD-262 | M6: Content Authoring (48 Gnomes, 3 Courses & Commentary Cues) |
 | [EVD-293](https://echopost.atlassian.net/browse/EVD-293) | Subtask | **To Do** | Medium | EVD-292 | Author 48 persistent gnome character bios, trait stats, and SVG portrait assets |
 | [EVD-294](https://echopost.atlassian.net/browse/EVD-294) | Subtask | **To Do** | Medium | EVD-292 | Author 3 course route graphs (Garden Grand Prix, Allotment Derby, Rockery Rally) |

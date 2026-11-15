@@ -13,6 +13,8 @@ let package = Package(
         .library(name: "GnomesEconomy", targets: ["GnomesEconomy"]),
         .library(name: "GnomesPersistence", targets: ["GnomesPersistence"]),
         .library(name: "GnomesServer", targets: ["GnomesServer"]),
+        .library(name: "GnomesPresentation", targets: ["GnomesPresentation"]),
+        .library(name: "GnomesAudio", targets: ["GnomesAudio"]),
     ],
     dependencies: [
         .package(url: "https://github.com/swhitty/FlyingFox.git", from: "0.16.0")
@@ -49,6 +51,14 @@ let package = Package(
                 .product(name: "FlyingFox", package: "FlyingFox")
             ]
         ),
+        .target(
+            name: "GnomesPresentation",
+            dependencies: ["GnomesCore", "GnomesContracts", "GnomesSimulation"]
+        ),
+        .target(
+            name: "GnomesAudio",
+            dependencies: ["GnomesCore", "GnomesContracts", "GnomesSimulation"]
+        ),
         .testTarget(
             name: "GnomesCoreTests",
             dependencies: ["GnomesCore"]
@@ -72,6 +82,14 @@ let package = Package(
         .testTarget(
             name: "GnomesServerTests",
             dependencies: ["GnomesServer", "GnomesCore", "GnomesContracts", "GnomesEconomy", "GnomesSimulation"]
+        ),
+        .testTarget(
+            name: "GnomesPresentationTests",
+            dependencies: ["GnomesPresentation", "GnomesCore", "GnomesContracts", "GnomesSimulation"]
+        ),
+        .testTarget(
+            name: "GnomesAudioTests",
+            dependencies: ["GnomesAudio", "GnomesCore", "GnomesSimulation"]
         ),
     ]
 )
