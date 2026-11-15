@@ -60,6 +60,20 @@ let package = Package(
             name: "GnomesAudio",
             dependencies: ["GnomesCore", "GnomesContracts", "GnomesSimulation"]
         ),
+        .executableTarget(
+            name: "OhGnomesApp",
+            dependencies: [
+                "GnomesCore",
+                "GnomesContracts",
+                "GnomesSimulation",
+                "GnomesEconomy",
+                "GnomesPersistence",
+                "GnomesServer",
+                "GnomesPresentation",
+                "GnomesAudio",
+                .product(name: "FlyingFox", package: "FlyingFox")
+            ]
+        ),
         .testTarget(
             name: "GnomesCoreTests",
             dependencies: ["GnomesCore"]

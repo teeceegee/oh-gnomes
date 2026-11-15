@@ -188,4 +188,77 @@ struct GnomesServerTests {
 
         await server.stop()
     }
+
+    @Test("20-Client Concurrent Load, Atomic Betting & Dispatch Stress Test (EVD-297)")
+    func test20ClientConcurrentLoadAndStress() async throws {
+        let gnomes = createTestRoster()
+        let manager = SessionManager(joinCode: "RACE", mode: .mystery, allGnomes: gnomes)
+
+        // 1. Concurrently join 20 players using withThrowingTaskGroup
+        let joinedPlayers = try await withThrowingTaskGroup(of: JoinSuccessPayload.self) { group in
+            for i in 1...20 {
+                group.addTask {
+                    let req = JoinRequest(joinCode: "RACE", displayName: "Contender_\(i)", clientNonce: "nonce_\(i)")
+                    return try await manager.join(request: req, credentialHash: "cred_mac_\(i)")
+                }
+            }
+            var results: [JoinSuccessPayload] = []
+            for try await res in group {
+                results.append(res)
+            }
+            return results
+        }
+
+        #expect(joinedPlayers.count == 20)
+        let uniqueGems = Set(joinedPlayers.map { $0.gem.id })
+        #expect(uniqueGems.count == 20)
+
+        // 2. Open race betting
+        let race = await manager.prepareNextRace()
+        try await manager.startIntroduction()
+        try await manager.openBetting()
+
+        let quotes = await manager.currentQuotes
+        #expect(quotes.count == 8)
+
+        // 3. Concurrently place bets from all 20 players
+        let betResults = try await withThrowingTaskGroup(of: BetTicketProjection.self) { group in
+            for player in joinedPlayers {
+                group.addTask {
+                    let quoteIdx = abs(player.displayName.hashValue) % 8
+                    let chosenQuote = quotes[quoteIdx]
+                    let betReq = PlaceBetRequest(
+                        raceId: race.id,
+                        gnomeId: chosenQuote.gnomeId,
+                        stakePennies: 1_000, // £10.00
+                        oddsQuoteId: chosenQuote.id
+                    )
+                    return try await manager.placeBet(request: betReq, playerId: player.playerId)
+                }
+            }
+            var receipts: [BetTicketProjection] = []
+            for try await receipt in group {
+                receipts.append(receipt)
+            }
+            return receipts
+        }
+
+        #expect(betResults.count == 20)
+
+        // 4. Lock betting atomically and verify reveals
+        let backedGems = try await manager.closeBetting()
+        #expect(backedGems.count == 20)
+
+        // 5. Simulate and settle race
+        let course = Course.gardenGrandPrix
+        let (simResult, settlements) = try await manager.runSimulationAndSettle(course: course, seed: 42)
+        #expect(simResult.finishOrder.count == 8)
+        #expect(settlements.count == 20)
+
+        // Verify all 20 players have legitimate balances remaining
+        for player in joinedPlayers {
+            let balance = await manager.ledger.getBalance(playerId: player.playerId)
+            #expect((balance ?? 0) > 0)
+        }
+    }
 }

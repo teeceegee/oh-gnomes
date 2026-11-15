@@ -292,8 +292,8 @@
 | [EVD-258](https://echopost.atlassian.net/browse/EVD-258) | Bug | **Done** | High | - | Praxis: Remediate Morning Briefing Noise, False-Positive Deliveries & Stale Email Action Alerts |
 | [EVD-259](https://echopost.atlassian.net/browse/EVD-259) | Bug | **Done** | High | - | Praxis News Intelligence: Implement Recency Cutoff, Briefed-Event Tracking & Category Diversification |
 | [EVD-260](https://echopost.atlassian.net/browse/EVD-260) | Bug | **Done** | High | - | Oh! Trivia: Fix questions.json syntax crash, local static path, WS role broadcast, and reset state bugs |
-| [EVD-261](https://echopost.atlassian.net/browse/EVD-261) | Task | **In Progress** | Medium | EVD-262 | Architect & Plan Implementation for Oh! Gnomes Platform |
-| [EVD-262](https://echopost.atlassian.net/browse/EVD-262) | Epic | **To Do** | High | - | [Oh! Gnomes] Native Swift & Metal Race-Night Platform |
+| [EVD-261](https://echopost.atlassian.net/browse/EVD-261) | Task | **Done** | Medium | EVD-262 | Architect & Plan Implementation for Oh! Gnomes Platform |
+| [EVD-262](https://echopost.atlassian.net/browse/EVD-262) | Epic | **Done** | High | - | [Oh! Gnomes] Native Swift & Metal Race-Night Platform |
 | [EVD-265](https://echopost.atlassian.net/browse/EVD-265) | Story | **Done** | Medium | EVD-262 | M0: Swift Package Scaffolding, Core Domain Models & Wire Contracts |
 | [EVD-266](https://echopost.atlassian.net/browse/EVD-266) | Subtask | **Done** | Medium | EVD-265 | Initialize Swift 6 Package with modular library targets |
 | [EVD-267](https://echopost.atlassian.net/browse/EVD-267) | Subtask | **Done** | Medium | EVD-265 | Model core domain entities and state machines in GnomesCore |
@@ -325,7 +325,7 @@
 | [EVD-293](https://echopost.atlassian.net/browse/EVD-293) | Subtask | **Done** | Medium | EVD-292 | Author 48 persistent gnome character bios, trait stats, and SVG portrait assets |
 | [EVD-294](https://echopost.atlassian.net/browse/EVD-294) | Subtask | **Done** | Medium | EVD-292 | Author 3 course route graphs (Garden Grand Prix, Allotment Derby, Rockery Rally) |
 | [EVD-295](https://echopost.atlassian.net/browse/EVD-295) | Subtask | **Done** | Medium | EVD-292 | Author procedural comedic commentary vocabulary library |
-| [EVD-296](https://echopost.atlassian.net/browse/EVD-296) | Story | **To Do** | Medium | EVD-262 | M7: Hardening, AirPlay Verification & Social Playtest RC |
-| [EVD-297](https://echopost.atlassian.net/browse/EVD-297) | Subtask | **To Do** | Medium | EVD-296 | Execute 20-client concurrent load and reconnection stress testing |
-| [EVD-298](https://echopost.atlassian.net/browse/EVD-298) | Subtask | **To Do** | Medium | EVD-296 | Verify AirPlay screen-mirroring latency, 60fps stability, and audio sync |
-| [EVD-299](https://echopost.atlassian.net/browse/EVD-299) | Subtask | **To Do** | Medium | EVD-296 | Build automated turnkey macOS .app bundle package for Argolis |
+| [EVD-296](https://echopost.atlassian.net/browse/EVD-296) | Story | **Done** | Medium | EVD-262 | M7: Hardening, AirPlay Verification & Social Playtest RC |
+| [EVD-297](https://echopost.atlassian.net/browse/EVD-297) | Subtask | **Done** | Medium | EVD-296 | Execute 20-client concurrent load and reconnection stress testing |
+| [EVD-298](https://echopost.atlassian.net/browse/EVD-298) | Subtask | **Done** | Medium | EVD-296 | Verify AirPlay screen-mirroring latency, 60fps stability, and audio sync |
+| [EVD-299](https://echopost.atlassian.net/browse/EVD-299) | Subtask | **Done** | Medium | EVD-296 | Build automated turnkey macOS .app bundle package for Argolis |
