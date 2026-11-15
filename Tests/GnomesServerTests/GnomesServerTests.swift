@@ -160,6 +160,32 @@ struct GnomesServerTests {
         #expect(jsonStr.contains("\"status\":\"ok\""))
         #expect(jsonStr.contains("\"port\":8795"))
 
+        // Query root / (Web Controller HTML)
+        let rootUrl = URL(string: "http://127.0.0.1:\(testPort)/")!
+        let (rootData, rootResponse) = try await URLSession.shared.data(from: rootUrl)
+        let rootHttpRes = rootResponse as? HTTPURLResponse
+        #expect(rootHttpRes?.statusCode == 200)
+        let rootHtml = String(decoding: rootData, as: UTF8.self)
+        #expect(rootHtml.contains("Oh! Gnomes"))
+
+        // Query /api/race/current
+        let race = await manager.prepareNextRace()
+        try await manager.startIntroduction()
+        try await manager.openBetting()
+
+        var raceReq = URLRequest(url: URL(string: "http://127.0.0.1:\(testPort)/api/race/current")!)
+        raceReq.setValue("player_test_1", forHTTPHeaderField: "X-Player-ID")
+        let (raceData, raceResponse) = try await URLSession.shared.data(for: raceReq)
+        let raceHttpRes = raceResponse as? HTTPURLResponse
+        #expect(raceHttpRes?.statusCode == 200)
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let currentRaceView = try decoder.decode(CurrentRaceViewPayload.self, from: raceData)
+        #expect(currentRaceView.raceId == race.id)
+        #expect(currentRaceView.entrants.count == 8)
+        #expect(currentRaceView.phase == .bettingOpen)
+
         await server.stop()
     }
 }

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Oh! Gnomes — Mobile Controller</title>
+    <style>
+        :root {
+            --bg: #0f111a;
+            --surface: #1b1e2e;
+            --surface-card: #24283b;
+            --accent: #3b82f6;
+            --accent-green: #10b981;
+            --accent-gold: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #33384f;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        /* Top Header */
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .brand { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; }
+        .gem-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.08);
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .balance-badge {
+            background: #064e3b;
+            color: #34d399;
+            border: 1px solid #059669;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Container & Cards */
+        main { flex: 1; padding: 16px; display: flex; flex-direction: column; align-items: center; max-width: 480px; margin: 0 auto; width: 100%; }
+        .view-section { width: 100%; display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Input Controls */
+        input[type="text"] {
+            width: 100%;
+            background: #121420;
+            border: 1px solid var(--border);
+            padding: 14px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            margin: 8px 0 16px 0;
+            outline: none;
+        }
+        input[type="text"]:focus { border-color: var(--accent); }
+        .btn-primary {
+            width: 100%;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-primary:active { opacity: 0.8; }
+        .btn-green { background: var(--accent-green); }
+
+        /* Card Carousel */
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 14px;
+            padding-bottom: 16px;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
+        .gnome-card {
+            flex: 0 0 85%;
+            scroll-snap-align: center;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .gnome-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .gnome-name { font-size: 18px; font-weight: 700; }
+        .gnome-archetype { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .odds-tag {
+            background: #7c2d12;
+            color: #fed7aa;
+            border: 1px solid #ea580c;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 15px;
+        }
+        .gnome-bio { font-size: 13px; color: #cbd5e1; margin: 8px 0; font-style: italic; }
+        .trait-pill {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+        .form-summary { font-size: 12px; color: var(--text-muted); margin: 6px 0 14px 0; }
+
+        /* Modal / Sheet */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: flex-end;
+            z-index: 100;
+        }
+        .modal-overlay.active { display: flex; animation: slideUp 0.25s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-sheet {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-radius: 20px 20px 0 0;
+            padding: 24px;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .chips-row { display: flex; gap: 8px; margin: 14px 0; overflow-x: auto; }
+        .chip {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .chip.active { background: var(--accent); border-color: var(--accent); }
+
+        /* Receipt Box */
+        .receipt-box {
+            background: #142a1f;
+            border: 1px dashed var(--accent-green);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 14px 0;
+            text-align: center;
+        }
+        .countdown-pill {
+            background: #451a03;
+            color: #fbbf24;
+            border: 1px solid #d97706;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">🍄 Oh! Gnomes</div>
+        <div id="playerHeaderInfo" style="display: none; align-items: center; gap: 8px;">
+            <div id="gemPill" class="gem-pill"></div>
+            <div id="balanceBadge" class="balance-badge">£500.00</div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 1. JOIN VIEW -->
+        <section id="viewJoin" class="view-section active">
+            <div class="card" style="text-align: center; margin-top: 20px;">
+                <h2 style="margin: 0 0 6px 0;">Join Race Night</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Enter your 4-letter room code and choose your display name.</p>
+                <input type="text" id="joinCodeInput" placeholder="Room Code (e.g. GNOM)" style="text-transform: uppercase;" maxlength="6">
+                <input type="text" id="displayNameInput" placeholder="Your Name" maxlength="15">
+                <button class="btn-primary" onclick="handleJoinSubmit()">Join Game</button>
+                <div id="joinStatus" style="margin-top: 14px; font-weight: 600; font-size: 14px;"></div>
+            </div>
+        </section>
+
+        <!-- 2. LOBBY VIEW -->
+        <section id="viewLobby" class="view-section">
+            <div class="card" style="text-align: center; margin-top: 20px;">
+                <div class="countdown-pill">Lobby Open</div>
+                <h2 id="lobbyPlayerGreeting" style="margin: 8px 0;">Welcome, Player!</h2>
+                <p style="color: var(--text-muted); font-size: 14px;">You have joined the race night. Look at the big screen as other players arrive.</p>
+                <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; margin: 16px 0;">
+                    <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Your Gnome Gem</div>
+                    <div id="lobbyGemDisplay" style="font-size: 24px; font-weight: 800; margin-top: 6px;"></div>
+                </div>
+                <p style="color: var(--text-muted); font-size: 13px;">Race 1 will begin shortly...</p>
+            </div>
+        </section>
+
+        <!-- 3. BETTING OPEN VIEW -->
+        <section id="viewBetting" class="view-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 8px;">
+                <h3 id="bettingRaceTitle" style="margin: 0; font-size: 18px;">Race 1</h3>
+                <div id="timerPill" class="countdown-pill">⏱ Betting Open</div>
+            </div>
+
+            <div id="betReceiptContainer" style="display: none; width: 100%;">
+                <div class="receipt-box">
+                    <div style="font-size: 12px; color: #a7f3d0; text-transform: uppercase; font-weight: 700;">✓ Official Bet Locked</div>
+                    <div id="receiptGnomeName" style="font-size: 20px; font-weight: 800; color: #fff; margin: 6px 0;">Runner Name</div>
+                    <div id="receiptDetails" style="font-size: 14px; color: #6ee7b7;">Stake £10 @ 3/1 • Potential Return: £40.00</div>
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 8px;">Watch the big screen to see your Gnome Gem floating above your runner!</div>
+                </div>
+            </div>
+
+            <div id="cardDeckBrowser" class="carousel-container"></div>
+        </section>
+
+        <!-- 4. LIVE RACE TRACKER VIEW -->
+        <section id="viewRace" class="view-section">
+            <div class="card" style="text-align: center;">
+                <div class="countdown-pill" style="background:#1e3a8a; color:#93c5fd; border-color:#3b82f6;">🏁 Race in Progress</div>
+                <h2 style="margin: 6px 0;">Watch the Big Screen!</h2>
+                <p style="color: var(--text-muted); font-size: 14px;">The gnomes are on the track. Incidents and photo finishes are unfolding live.</p>
+                <div id="liveTrackInfo" style="margin-top: 14px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; font-size: 14px;"></div>
+            </div>
+        </section>
+
+        <!-- 5. SETTLEMENT VIEW -->
+        <section id="viewSettlement" class="view-section">
+            <div class="card" style="text-align: center;">
+                <div id="settlementResultBanner" style="font-size: 28px; font-weight: 900; margin-bottom: 8px;">🎉 You Won!</div>
+                <div id="settlementGnomeWon" style="font-size: 16px; color: var(--text-muted); margin-bottom: 14px;"></div>
+                <div style="background: rgba(0,0,0,0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                    <div style="font-size: 13px; color: var(--text-muted);">Payout Received</div>
+                    <div id="settlementPayoutText" style="font-size: 26px; font-weight: 800; color: var(--accent-green); margin-top: 4px;">+£0.00</div>
+                    <div id="settlementNewBalanceText" style="font-size: 14px; color: var(--text-muted); margin-top: 6px;">New Balance: £500.00</div>
+                </div>
+                <p style="color: var(--text-muted); font-size: 13px;">Preparing the next race...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- BET SLIP MODAL SHEET -->
+    <div id="betSlipModal" class="modal-overlay">
+        <div class="modal-sheet">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 id="sheetGnomeName" style="margin: 0; font-size: 20px;">Bet on Gnome</h3>
+                <div id="sheetOddsTag" class="odds-tag">3/1</div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                Potential Return: <span id="sheetPotentialReturn" style="font-weight: 800; color: #fff;">£40.00</span>
+            </div>
+
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px;">Select Stake: <span id="stakeDisplay" style="color: var(--accent-green); font-size: 16px; font-weight: 800;">£10</span></div>
+            <input type="range" id="stakeSlider" min="1" max="500" value="10" step="1" style="width: 100%; accent-color: var(--accent-green);">
+
+            <div class="chips-row">
+                <button class="chip" onclick="setStake(1)">£1</button>
+                <button class="chip" onclick="setStake(5)">£5</button>
+                <button class="chip active" onclick="setStake(10)">£10</button>
+                <button class="chip" onclick="setStake(25)">£25</button>
+                <button class="chip" onclick="setStake(50)">£50</button>
+                <button class="chip" onclick="setStake(100)">£100</button>
+                <button class="chip" onclick="setAllIn()">All In</button>
+            </div>
+
+            <button id="confirmBetBtn" class="btn-primary btn-green" onclick="submitBet()">Confirm Bet (£10)</button>
+            <button class="btn-primary" style="background: transparent; color: var(--text-muted); margin-top: 8px;" onclick="closeBetSlip()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let player = JSON.parse(localStorage.getItem('oh_gnomes_player') || 'null');
+        let currentRaceView = null;
+        let selectedGnome = null;
+        let selectedOddsQuote = null;
+        let currentStakePounds = 10;
+        let ws = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (player) {
+                restoreSession();
+            }
+            initWebSocket();
+        });
+
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        function updateHeader() {
+            if (!player) return;
+            document.getElementById('playerHeaderInfo').style.display = 'flex';
+            const pill = document.getElementById('gemPill');
+            pill.innerHTML = `<span style="color:${player.gem.colorHex}; font-size:16px;">${player.gem.iconSymbol}</span> ${player.displayName}`;
+            document.getElementById('balanceBadge').innerText = `£${(player.balancePennies / 100).toFixed(2)}`;
+        }
+
+        async function handleJoinSubmit() {
+            const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+            const name = document.getElementById('displayNameInput').value.trim();
+            const status = document.getElementById('joinStatus');
+
+            if (!code || !name) {
+                status.innerText = 'Please enter room code and name.';
+                status.style.color = '#ef4444';
+                return;
+            }
+
+            status.innerText = 'Connecting...';
+            status.style.color = '#3b82f6';
+
+            let deviceHash = localStorage.getItem('oh_gnomes_device_hash') || crypto.randomUUID();
+            localStorage.setItem('oh_gnomes_device_hash', deviceHash);
+
+            try {
+                const res = await fetch('/api/player/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Device-Hash': deviceHash },
+                    body: JSON.stringify({ joinCode: code, displayName: name, clientNonce: crypto.randomUUID() })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    player = data;
+                    localStorage.setItem('oh_gnomes_player', JSON.stringify(player));
+                    status.innerText = '';
+                    restoreSession();
+                } else {
+                    status.innerText = data.error || 'Failed to join';
+                    status.style.color = '#ef4444';
+                }
+            } catch (err) {
+                status.innerText = 'Connection error: ' + err.message;
+                status.style.color = '#ef4444';
+            }
+        }
+
+        function restoreSession() {
+            updateHeader();
+            document.getElementById('lobbyPlayerGreeting').innerText = `Welcome, ${player.displayName}!`;
+            document.getElementById('lobbyGemDisplay').innerHTML = `<span style="color:${player.gem.colorHex}">${player.gem.iconSymbol}</span> ${player.gem.name}`;
+            showView('viewLobby');
+            fetchCurrentRace();
+        }
+
+        async function fetchCurrentRace() {
+            if (!player) return;
+            try {
+                const res = await fetch('/api/race/current', {
+                    headers: { 'X-Player-ID': player.playerId }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    currentRaceView = data;
+                    renderRaceView(data);
+                }
+            } catch (e) {
+                console.error("Failed to fetch race view:", e);
+            }
+        }
+
+        function renderRaceView(view) {
+            if (view.phase === 'bettingOpen') {
+                showView('viewBetting');
+                document.getElementById('bettingRaceTitle').innerText = `${view.courseName} (Race ${view.raceIndex})`;
+
+                if (view.myBet) {
+                    // Bet is already placed
+                    document.getElementById('betReceiptContainer').style.display = 'block';
+                    document.getElementById('receiptGnomeName').innerText = view.myBet.gnomeName;
+                    document.getElementById('receiptDetails').innerText = `Stake £${(view.myBet.stakePennies/100).toFixed(2)} @ ${view.myBet.oddsDisplay} • Return: £${(view.myBet.potentialReturnPennies/100).toFixed(2)}`;
+                    document.getElementById('cardDeckBrowser').style.display = 'none';
+                } else {
+                    document.getElementById('betReceiptContainer').style.display = 'none';
+                    document.getElementById('cardDeckBrowser').style.display = 'flex';
+                    renderCards(view.entrants);
+                }
+            } else if (view.phase === 'bettingClosed' || view.phase === 'simulating') {
+                showView('viewRace');
+                document.getElementById('liveTrackInfo').innerText = view.myBet ? `You are backing ${view.myBet.gnomeName}!` : 'Spectating race';
+            }
+        }
+
+        function renderCards(entrants) {
+            const container = document.getElementById('cardDeckBrowser');
+            container.innerHTML = '';
+
+            entrants.forEach(g => {
+                const card = document.createElement('div');
+                card.className = 'gnome-card';
+                card.innerHTML = `
+                    <div class="gnome-header">
+                        <div>
+                            <div class="gnome-name">${g.name}</div>
+                            <div class="gnome-archetype">${g.archetype}</div>
+                        </div>
+                        <div class="odds-tag">${g.oddsDisplay}</div>
+                    </div>
+                    <div class="gnome-bio">"${g.biography}"</div>
+                    <div>${g.traits.map(t => `<span class="trait-pill">${t.displayName}</span>`).join('')}</div>
+                    <div class="form-summary">${g.careerFormSummary}</div>
+                    <button class="btn-primary" style="margin-top:auto;" onclick="openBetSlip('${g.id}', '${g.name}', '${g.oddsDisplay}', '${g.oddsQuoteId}')">Bet on ${g.name}</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openBetSlip(gnomeId, name, oddsDisplay, oddsQuoteId) {
+            selectedGnome = { id: gnomeId, name: name };
+            selectedOddsQuote = { id: oddsQuoteId, oddsDisplay: oddsDisplay };
+
+            document.getElementById('sheetGnomeName').innerText = `Bet on ${name}`;
+            document.getElementById('sheetOddsTag').innerText = oddsDisplay;
+
+            const maxStakePounds = Math.max(1, Math.floor(player.balancePennies / 100));
+            const slider = document.getElementById('stakeSlider');
+            slider.max = maxStakePounds;
+            slider.value = Math.min(10, maxStakePounds);
+            setStake(parseInt(slider.value));
+
+            document.getElementById('betSlipModal').classList.add('active');
+        }
+
+        function closeBetSlip() {
+            document.getElementById('betSlipModal').classList.remove('active');
+        }
+
+        function setStake(amount) {
+            const maxStake = Math.max(1, Math.floor(player.balancePennies / 100));
+            currentStakePounds = Math.min(amount, maxStake);
+            document.getElementById('stakeSlider').value = currentStakePounds;
+            document.getElementById('stakeDisplay').innerText = `£${currentStakePounds}`;
+            document.getElementById('confirmBetBtn').innerText = `Confirm Bet (£${currentStakePounds})`;
+
+            // Calculate return
+            if (selectedOddsQuote) {
+                const parts = selectedOddsQuote.oddsDisplay.split('/');
+                const num = parseInt(parts[0]) || 1;
+                const den = parseInt(parts[1]) || 1;
+                const potentialReturn = currentStakePounds + Math.floor((currentStakePounds * num) / den);
+                document.getElementById('sheetPotentialReturn').innerText = `£${potentialReturn.toFixed(2)}`;
+            }
+        }
+
+        document.getElementById('stakeSlider').addEventListener('input', (e) => {
+            setStake(parseInt(e.target.value));
+        });
+
+        function setAllIn() {
+            setStake(Math.floor(player.balancePennies / 100));
+        }
+
+        async function submitBet() {
+            if (!selectedGnome || !selectedOddsQuote) return;
+            const confirmBtn = document.getElementById('confirmBetBtn');
+            confirmBtn.innerText = 'Locking Bet...';
+            confirmBtn.disabled = true;
+
+            const stakePennies = currentStakePounds * 100;
+
+            try {
+                const res = await fetch('/api/player/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Player-ID': player.playerId },
+                    body: JSON.stringify({
+                        raceId: currentRaceView.raceId,
+                        gnomeId: selectedGnome.id,
+                        stakePennies: stakePennies,
+                        oddsQuoteId: selectedOddsQuote.id,
+                        clientNonce: crypto.randomUUID()
+                    })
+                });
+
+                if (res.ok) {
+                    player.balancePennies -= stakePennies;
+                    localStorage.setItem('oh_gnomes_player', JSON.stringify(player));
+                    updateHeader();
+                    closeBetSlip();
+                    fetchCurrentRace();
+                } else {
+                    const err = await res.json();
+                    alert(err.error || 'Failed to place bet');
+                }
+            } catch (e) {
+                alert('Network error: ' + e.message);
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.innerText = `Confirm Bet (£${currentStakePounds})`;
+            }
+        }
+
+        function initWebSocket() {
+            const loc = window.location;
+            const wsProtocol = loc.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${wsProtocol}//${loc.host}/ws`;
+
+            ws = new WebSocket(wsUrl);
+            ws.onmessage = (event) => {
+                try {
+                    const env = JSON.parse(event.data);
+                    handleServerEnvelope(env);
+                } catch (e) {
+                    console.error("WS Parse error:", e);
+                }
+            };
+            ws.onclose = () => {
+                setTimeout(initWebSocket, 2000);
+            };
+        }
+
+        function handleServerEnvelope(envelope) {
+            if (envelope.type === 'phaseChanged') {
+                fetchCurrentRace();
+            } else if (envelope.type === 'settlementAnnounced') {
+                const payload = JSON.parse(envelope.payloadJSON);
+                showSettlement(payload);
+            }
+        }
+
+        function showSettlement(payload) {
+            showView('viewSettlement');
+            const banner = document.getElementById('settlementResultBanner');
+            if (payload.isWinner) {
+                banner.innerText = '🎉 WINNER!';
+                banner.style.color = '#34d399';
+            } else {
+                banner.innerText = 'Better luck next time!';
+                banner.style.color = '#94a3b8';
+            }
+            document.getElementById('settlementGnomeWon').innerText = `${payload.winningGnomeName} won the race.`;
+            document.getElementById('settlementPayoutText').innerText = `+£${(payload.myPayoutPennies / 100).toFixed(2)}`;
+            document.getElementById('settlementNewBalanceText').innerText = `New Balance: £${(payload.myNewBalancePennies / 100).toFixed(2)}`;
+
+            player.balancePennies = payload.myNewBalancePennies;
+            localStorage.setItem('oh_gnomes_player', JSON.stringify(player));
+            updateHeader();
+        }
+    </script>
+</body>
+</html>

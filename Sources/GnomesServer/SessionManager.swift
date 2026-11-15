@@ -292,6 +292,60 @@ public actor SessionManager {
         return (simResult, settlements)
     }
 
+    // MARK: - Current Race View for Mobile Players
+
+    /// Generates the current race view tailored for a specific mobile player
+    public func getCurrentRaceView(forPlayerId playerId: String) async -> CurrentRaceViewPayload? {
+        guard let race = currentRace else { return nil }
+        let course = courses.first(where: { $0.id == race.courseId }) ?? courses[0]
+        let quoteMap = Dictionary(uniqueKeysWithValues: currentQuotes.map { ($0.gnomeId, $0) })
+
+        let cards: [GnomeCardProjection] = currentEntrants.map { gnome in
+            let quote = quoteMap[gnome.id]
+            let oddsStr = quote?.displayString ?? "EVS"
+            let quoteId = quote?.id ?? ""
+            let formStr = "Form: \(String(format: "%+.2f", gnome.career.formRating)) (\(gnome.career.wins)W/\(gnome.career.racesRun)R)"
+
+            return GnomeCardProjection(
+                id: gnome.id,
+                name: gnome.name,
+                archetype: gnome.archetype,
+                portraitAsset: gnome.portraitAsset,
+                biography: gnome.biography,
+                traits: gnome.traits,
+                oddsDisplay: oddsStr,
+                oddsQuoteId: quoteId,
+                careerFormSummary: formStr
+            )
+        }
+
+        var betTicket: BetTicketProjection? = nil
+        if let bet = currentBets[playerId] {
+            let gnomeName = currentEntrants.first(where: { $0.id == bet.gnomeId })?.name ?? "Gnome"
+            betTicket = BetTicketProjection(
+                betId: bet.id,
+                gnomeId: bet.gnomeId,
+                gnomeName: gnomeName,
+                stakePennies: bet.stakePennies,
+                oddsDisplay: "\(bet.quoteNumerator)/\(bet.quoteDenominator)",
+                potentialReturnPennies: bet.potentialReturnPennies,
+                acceptedAt: bet.acceptedAt
+            )
+        }
+
+        let balance = await ledger.getBalance(playerId: playerId) ?? 0
+
+        return CurrentRaceViewPayload(
+            raceId: race.id,
+            raceIndex: race.raceIndex,
+            phase: race.phase,
+            courseName: course.name,
+            entrants: cards,
+            myBet: betTicket,
+            myBalancePennies: balance
+        )
+    }
+
     // MARK: - Projection & Mystery Mode Masking (D-04, Section 12)
 
     /// Generates role-projected standings adhering to Mystery Mode privacy constraints

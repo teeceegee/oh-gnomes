@@ -143,62 +143,33 @@ public final class GnomesHTTPServer: @unchecked Sendable {
             return HTTPResponse(statusCode: .ok, headers: [.contentType: "application/json"], body: data)
         }
 
+        // 8. Current Race View route for mobile phone controllers
+        await server.appendRoute("/api/race/current", for: [.GET]) { [weak self] request in
+            guard let self = self else { return HTTPResponse(statusCode: .internalServerError) }
+            let playerId = request.headers[HTTPHeader("X-Player-ID")] ?? ""
+            if let view = await self.sessionManager.getCurrentRaceView(forPlayerId: playerId) {
+                let encoder = JSONEncoder()
+                encoder.dateEncodingStrategy = .iso8601
+                guard let data = try? encoder.encode(view) else {
+                    return HTTPResponse(statusCode: .internalServerError)
+                }
+                return HTTPResponse(statusCode: .ok, headers: [.contentType: "application/json"], body: data)
+            } else {
+                return HTTPResponse(statusCode: .notFound, headers: [.contentType: "application/json"], body: Data("{\"error\":\"No active race\"}".utf8))
+            }
+        }
+
         // 8. Root Web Controller HTML
         await server.appendRoute("/", for: [.GET]) { _ in
+            let localPath = "WebController/index.html"
+            if let fileData = try? Data(contentsOf: URL(fileURLWithPath: localPath)) {
+                return HTTPResponse(statusCode: .ok, headers: [.contentType: "text/html; charset=utf-8"], body: fileData)
+            }
             let html = """
             <!DOCTYPE html>
             <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-                <title>Oh! Gnomes — Player Controller</title>
-                <style>
-                    body { font-family: system-ui, -apple-system, sans-serif; background: #1a1a24; color: #fff; margin: 0; padding: 20px; text-align: center; }
-                    .badge { display: inline-block; padding: 6px 12px; border-radius: 9999px; background: #3b82f6; font-weight: bold; margin-bottom: 12px; }
-                    h1 { margin: 10px 0; font-size: 28px; }
-                    .card { background: #262636; border-radius: 12px; padding: 20px; margin: 20px auto; max-width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-                    input, button { width: 100%; box-sizing: border-box; padding: 14px; border-radius: 8px; border: none; margin: 8px 0; font-size: 16px; }
-                    input { background: #121218; color: #fff; border: 1px solid #444; }
-                    button { background: #10b981; color: #fff; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-                    button:hover { background: #059669; }
-                </style>
-            </head>
-            <body>
-                <div class="card">
-                    <div class="badge">Oh! Gnomes</div>
-                    <h1>Join Race Night</h1>
-                    <p style="color: #9ca3af; font-size: 14px;">Enter your room code and display name to join the race.</p>
-                    <input type="text" id="joinCode" placeholder="Room Code (e.g. GNOM)" uppercase style="text-transform:uppercase;">
-                    <input type="text" id="displayName" placeholder="Your Name">
-                    <button id="joinBtn" onclick="handleJoin()">Join Game</button>
-                    <div id="status" style="margin-top: 15px; font-weight: bold;"></div>
-                </div>
-                <script>
-                    async function handleJoin() {
-                        const code = document.getElementById('joinCode').value.trim();
-                        const name = document.getElementById('displayName').value.trim();
-                        const status = document.getElementById('status');
-                        if (!code || !name) { status.innerText = 'Please enter room code and name.'; status.style.color = '#ef4444'; return; }
-                        status.innerText = 'Connecting...'; status.style.color = '#3b82f6';
-                        try {
-                            const res = await fetch('/api/player/join', {
-                                method: 'POST',
-                                headers: {'Content-Type':'application/json'},
-                                body: JSON.stringify({joinCode: code, displayName: name, clientNonce: crypto.randomUUID()})
-                            });
-                            const data = await res.json();
-                            if (res.ok) {
-                                status.innerText = `Joined as ${data.displayName}! Gem: ${data.gem.name}`;
-                                status.style.color = '#10b981';
-                            } else {
-                                status.innerText = data.error || 'Failed to join'; status.style.color = '#ef4444';
-                            }
-                        } catch (e) {
-                            status.innerText = 'Connection error: ' + e.message; status.style.color = '#ef4444';
-                        }
-                    }
-                </script>
-            </body>
+            <head><title>Oh! Gnomes</title></head>
+            <body><h1>Oh! Gnomes Mobile Controller</h1></body>
             </html>
             """
             return HTTPResponse(statusCode: .ok, headers: [.contentType: "text/html; charset=utf-8"], body: Data(html.utf8))

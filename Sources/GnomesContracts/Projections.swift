@@ -109,3 +109,34 @@ public struct StandingsProjection: Codable, Sendable {
         }
     }
 }
+
+public struct CurrentRaceViewPayload: Codable, Sendable {
+    public let raceId: String
+    public let raceIndex: Int
+    public let phase: RacePhase
+    public let courseName: String
+    public let entrants: [GnomeCardProjection]
+    public let myBet: BetTicketProjection?
+    public let myBalancePennies: Int
+    public let secondsRemaining: Int?
+
+    public init(
+        raceId: String,
+        raceIndex: Int,
+        phase: RacePhase,
+        courseName: String,
+        entrants: [GnomeCardProjection],
+        myBet: BetTicketProjection?,
+        myBalancePennies: Int,
+        secondsRemaining: Int? = nil
+    ) {
+        self.raceId = raceId
+        self.raceIndex = raceIndex
+        self.phase = phase
+        self.courseName = courseName
+        self.entrants = entrants
+        self.myBet = myBet
+        self.myBalancePennies = myBalancePennies
+        self.secondsRemaining = secondsRemaining
+    }
+}
