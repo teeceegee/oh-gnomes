@@ -188,6 +188,7 @@ public final class HostViewModel: ObservableObject {
         var lastLeaderId: String? = nil
         var lastCommentaryTick = -90
         var lastIncidentCount = 0
+        var announcedRanks: Set<Int> = []
 
         // Live 30Hz frame stepping
         while !engine.isComplete {
@@ -195,8 +196,27 @@ public final class HostViewModel: ObservableObject {
             let updatedRunners = engine.runners
             broadcastScene.updateScene(runners: updatedRunners, dt: dt)
 
-            // Live incident commentary (throttled)
-            if engine.incidents.count > lastIncidentCount {
+            // Immediate finish-line announcements for 1st, 2nd, and 3rd place
+            let finishers = updatedRunners
+                .filter { $0.isFinished }
+                .sorted { ($0.finishRank ?? 99) < ($1.finishRank ?? 99) }
+
+            for finisher in finishers {
+                guard let rank = finisher.finishRank, rank <= 3, !announcedRanks.contains(rank) else { continue }
+                announcedRanks.insert(rank)
+                if rank == 1 {
+                    audioFX.playEffect(.trumpetFanfare)
+                    let winLine = commentaryGenerator.commentaryForWinner(winnerName: finisher.gnomeName, seed: Int(seed))
+                    commentaryEngine.speak(winLine, interrupt: true)
+                } else if rank == 2 {
+                    commentaryEngine.speak("Second place goes to \(finisher.gnomeName)!", interrupt: false)
+                } else if rank == 3 {
+                    commentaryEngine.speak("And \(finisher.gnomeName) claims third place on the podium!", interrupt: false)
+                }
+            }
+
+            // Live incident commentary (throttled, only before winner finishes)
+            if !announcedRanks.contains(1), engine.incidents.count > lastIncidentCount {
                 let newIncident = engine.incidents[lastIncidentCount]
                 lastIncidentCount = engine.incidents.count
                 if !commentaryEngine.isSpeaking && (engine.currentTick - lastCommentaryTick) >= 75 {
@@ -213,7 +233,8 @@ public final class HostViewModel: ObservableObject {
 
             // Dynamic camera director & overtake commentary
             if let leader = updatedRunners.max(by: { $0.distanceMeters < $1.distanceMeters }) {
-                if let prevId = lastLeaderId, prevId != leader.gnomeId,
+                if !announcedRanks.contains(1),
+                   let prevId = lastLeaderId, prevId != leader.gnomeId,
                    !commentaryEngine.isSpeaking, (engine.currentTick - lastCommentaryTick) >= 90 {
                     lastCommentaryTick = engine.currentTick
                     let prevName = entrants.first(where: { $0.id == prevId })?.name ?? "the leader"
@@ -233,9 +254,12 @@ public final class HostViewModel: ObservableObject {
         // Finish line & settlement
         _ = try? await sessionManager.runSimulationAndSettle(course: course, seed: seed)
 
-        if let winner = engine.runners.filter({ $0.isFinished }).min(by: { ($0.finishRank ?? 99) < ($1.finishRank ?? 99) }) {
-            let winLine = commentaryGenerator.commentaryForWinner(winnerName: winner.gnomeName, seed: Int(seed))
-            commentaryEngine.speak(winLine)
+        let podium = engine.runners
+            .filter { $0.isFinished }
+            .sorted { ($0.finishRank ?? 99) < ($1.finishRank ?? 99) }
+            .prefix(3)
+        if podium.count == 3 {
+            self.subtitleText = "🏆 1st: \(podium[0].gnomeName)  •  🥈 2nd: \(podium[1].gnomeName)  •  🥉 3rd: \(podium[2].gnomeName)"
         }
 
         self.currentPhaseName = "Race Finished (Settled)"
