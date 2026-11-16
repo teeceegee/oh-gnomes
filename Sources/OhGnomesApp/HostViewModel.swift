@@ -127,21 +127,20 @@ public final class HostViewModel: ObservableObject {
                 try? await sessionManager.startIntroduction()
                 self.currentPhaseName = "Introduction"
                 self.audioFX.playEffect(.trumpetFanfare)
-                let introSpeech = commentaryGenerator.commentaryForStart(courseName: course.name, entrantsCount: 8)
-                self.commentaryEngine.speak(introSpeech)
+                self.commentaryEngine.speak("Welcome to the \(course.name)! Eight gnomes are stepping up to the starting line. Inspect their form on your phones!")
                 await notifyClientsPhaseChanged()
 
             case .introduction:
                 try? await sessionManager.openBetting()
                 self.currentPhaseName = "Betting Open"
-                self.commentaryEngine.speak("Betting is now open! Place your stakes on your phone!")
+                self.commentaryEngine.speak("Betting is now open for race \(currentRaceIndex)! Place your stakes on your phone!")
                 await notifyClientsPhaseChanged()
 
             case .bettingOpen:
                 let backedGems = (try? await sessionManager.closeBetting()) ?? []
                 self.currentPhaseName = "Betting Closed"
                 self.broadcastScene.attachGems(backedGems)
-                self.commentaryEngine.speak("Betting is closed! Gems are revealed, runners take your marks!")
+                self.commentaryEngine.speak("Betting is closed! All bets are locked and the Gnome Gems are revealed on the track!")
                 await notifyClientsPhaseChanged()
 
             case .bettingClosed:
@@ -152,7 +151,7 @@ public final class HostViewModel: ObservableObject {
                 await syncSceneToCurrentRace(race: nextRace)
                 self.currentRaceIndex += 1
                 self.currentPhaseName = "Preparing"
-                self.commentaryEngine.speak("Prepare for the next race!")
+                self.commentaryEngine.speak("Preparing race number \(currentRaceIndex)!")
                 await notifyClientsPhaseChanged()
 
             default:
@@ -167,12 +166,16 @@ public final class HostViewModel: ObservableObject {
         isRunningRace = true
         self.currentPhaseName = "Racing"
 
-        self.audioFX.playEffect(.startingGun)
-        self.commentaryEngine.speak("And they're off!")
-
         let course = courses.first(where: { $0.id == race.courseId }) ?? courses[0]
         let seed = UInt64.random(in: 1...1_000_000)
         let entrants = await sessionManager.currentEntrants
+        let trackBounds = CGRect(x: 0, y: 0, width: course.totalDistanceMeters * 25.0, height: 1080)
+
+        self.audioFX.playEffect(.startingGun)
+        let startSpeech = commentaryGenerator.commentaryForStart(courseName: course.name, entrantsCount: entrants.count, seed: Int(seed))
+        self.commentaryEngine.speak(startSpeech)
+
+        broadcastScene.cameraDirector.setMode(.packLead, trackBounds: trackBounds)
 
         let engine = SimulationEngine(
             raceId: race.id,
@@ -182,6 +185,9 @@ public final class HostViewModel: ObservableObject {
         )
 
         let dt: CGFloat = 1.0 / 30.0
+        var lastLeaderId: String? = nil
+        var lastCommentaryTick = -90
+        var lastIncidentCount = 0
 
         // Live 30Hz frame stepping
         while !engine.isComplete {
@@ -189,10 +195,35 @@ public final class HostViewModel: ObservableObject {
             let updatedRunners = engine.runners
             broadcastScene.updateScene(runners: updatedRunners, dt: dt)
 
-            // Dynamic camera director tracking leader
+            // Live incident commentary (throttled)
+            if engine.incidents.count > lastIncidentCount {
+                let newIncident = engine.incidents[lastIncidentCount]
+                lastIncidentCount = engine.incidents.count
+                if !commentaryEngine.isSpeaking && (engine.currentTick - lastCommentaryTick) >= 75 {
+                    lastCommentaryTick = engine.currentTick
+                    let line = commentaryGenerator.commentaryForIncident(
+                        runnerName: newIncident.runnerName,
+                        incidentType: newIncident.incidentType,
+                        reason: newIncident.description,
+                        seed: engine.currentTick
+                    )
+                    commentaryEngine.speak(line, interrupt: false)
+                }
+            }
+
+            // Dynamic camera director & overtake commentary
             if let leader = updatedRunners.max(by: { $0.distanceMeters < $1.distanceMeters }) {
-                if leader.distanceMeters >= course.totalDistanceMeters - 20.0 {
-                    broadcastScene.cameraDirector.setMode(.finishLine, trackBounds: CGRect(x: 0, y: 0, width: course.totalDistanceMeters * 25.0, height: 1080))
+                if let prevId = lastLeaderId, prevId != leader.gnomeId,
+                   !commentaryEngine.isSpeaking, (engine.currentTick - lastCommentaryTick) >= 90 {
+                    lastCommentaryTick = engine.currentTick
+                    let prevName = entrants.first(where: { $0.id == prevId })?.name ?? "the leader"
+                    let overtakeLine = commentaryGenerator.commentaryForOvertake(leaderName: leader.gnomeName, chaserName: prevName, seed: engine.currentTick)
+                    commentaryEngine.speak(overtakeLine, interrupt: false)
+                }
+                lastLeaderId = leader.gnomeId
+
+                if leader.distanceMeters >= course.totalDistanceMeters - 25.0 {
+                    broadcastScene.cameraDirector.setMode(.finishLine, trackBounds: trackBounds)
                 }
             }
 

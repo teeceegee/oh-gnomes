@@ -17,6 +17,7 @@ public struct HostBroadcastView: View {
                 preferredFramesPerSecond: 60,
                 options: [.ignoresSiblingOrder]
             )
+            .id(ObjectIdentifier(viewModel.broadcastScene))
             .edgesIgnoringSafeArea(.all)
 
             // 2. HUD Overlays

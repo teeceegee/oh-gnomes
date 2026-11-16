@@ -17,7 +17,10 @@ public final class CommentaryEngine: NSObject, @unchecked Sendable, AVSpeechSynt
     }
 
     /// Speaks a commentary line and emits synchronized subtitles
-    public func speak(_ text: String, pitchMultiplier: Float = 1.05, rateMultiplier: Float = 0.52) {
+    public func speak(_ text: String, pitchMultiplier: Float = 1.05, rateMultiplier: Float = 0.52, interrupt: Bool = true) {
+        if interrupt {
+            stopSpeaking()
+        }
         onSubtitleEmitted?(text)
 
         let utterance = AVSpeechUtterance(string: text)
