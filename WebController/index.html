@@ -327,11 +327,31 @@
         let currentStakePounds = 10;
         let ws = null;
 
+        function generateUUID() {
+            if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+                return crypto.randomUUID();
+            }
+            if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+                const bytes = new Uint8Array(16);
+                crypto.getRandomValues(bytes);
+                bytes[6] = (bytes[6] & 0x0f) | 0x40;
+                bytes[8] = (bytes[8] & 0x3f) | 0x80;
+                return Array.from(bytes).map((b, i) => ([4,6,8,10].includes(i) ? '-' : '') + b.toString(16).padStart(2, '0')).join('');
+            }
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                const r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             if (player) {
                 restoreSession();
             }
             initWebSocket();
+            setInterval(() => {
+                if (player) fetchCurrentRace();
+            }, 3000);
         });
 
         function showView(viewId) {
@@ -361,14 +381,14 @@
             status.innerText = 'Connecting...';
             status.style.color = '#3b82f6';
 
-            let deviceHash = localStorage.getItem('oh_gnomes_device_hash') || crypto.randomUUID();
-            localStorage.setItem('oh_gnomes_device_hash', deviceHash);
-
             try {
+                let deviceHash = localStorage.getItem('oh_gnomes_device_hash') || generateUUID();
+                localStorage.setItem('oh_gnomes_device_hash', deviceHash);
+
                 const res = await fetch('/api/player/join', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-Device-Hash': deviceHash },
-                    body: JSON.stringify({ joinCode: code, displayName: name, clientNonce: crypto.randomUUID() })
+                    body: JSON.stringify({ joinCode: code, displayName: name, clientNonce: generateUUID() })
                 });
                 const data = await res.json();
                 if (res.ok) {
@@ -411,7 +431,19 @@
         }
 
         function renderRaceView(view) {
-            if (view.phase === 'bettingOpen') {
+            if (typeof view.myBalancePennies === 'number') {
+                player.balancePennies = view.myBalancePennies;
+                localStorage.setItem('oh_gnomes_player', JSON.stringify(player));
+                updateHeader();
+            }
+
+            if (view.phase === 'preparing' || view.phase === 'introduction') {
+                showView('viewLobby');
+                const greeting = view.phase === 'introduction'
+                    ? `Race ${view.raceIndex} (${view.courseName}) — Introducing Runners...`
+                    : `Race ${view.raceIndex} (${view.courseName}) — Preparing...`;
+                document.getElementById('lobbyPlayerGreeting').innerText = `Welcome, ${player.displayName}! (${greeting})`;
+            } else if (view.phase === 'bettingOpen') {
                 showView('viewBetting');
                 document.getElementById('bettingRaceTitle').innerText = `${view.courseName} (Race ${view.raceIndex})`;
 
@@ -426,9 +458,16 @@
                     document.getElementById('cardDeckBrowser').style.display = 'flex';
                     renderCards(view.entrants);
                 }
-            } else if (view.phase === 'bettingClosed' || view.phase === 'simulating') {
+            } else if (view.phase === 'bettingClosed' || view.phase === 'simulating' || view.phase === 'presentationFinished' || view.phase === 'settling') {
                 showView('viewRace');
                 document.getElementById('liveTrackInfo').innerText = view.myBet ? `You are backing ${view.myBet.gnomeName}!` : 'Spectating race';
+            } else if (view.phase === 'published' || view.phase === 'archived') {
+                if (view.mySettlement) {
+                    showSettlement(view.mySettlement);
+                } else {
+                    showView('viewRace');
+                    document.getElementById('liveTrackInfo').innerText = 'Race finished! Waiting for next race...';
+                }
             }
         }
 
@@ -442,16 +481,25 @@
                 card.innerHTML = `
                     <div class="gnome-header">
                         <div>
-                            <div class="gnome-name">${g.name}</div>
-                            <div class="gnome-archetype">${g.archetype}</div>
+                            <div class="gnome-name"></div>
+                            <div class="gnome-archetype"></div>
                         </div>
-                        <div class="odds-tag">${g.oddsDisplay}</div>
+                        <div class="odds-tag"></div>
                     </div>
-                    <div class="gnome-bio">"${g.biography}"</div>
-                    <div>${g.traits.map(t => `<span class="trait-pill">${t.displayName}</span>`).join('')}</div>
-                    <div class="form-summary">${g.careerFormSummary}</div>
-                    <button class="btn-primary" style="margin-top:auto;" onclick="openBetSlip('${g.id}', '${g.name}', '${g.oddsDisplay}', '${g.oddsQuoteId}')">Bet on ${g.name}</button>
+                    <div class="gnome-bio"></div>
+                    <div class="gnome-traits"></div>
+                    <div class="form-summary"></div>
+                    <button class="btn-primary bet-card-btn" style="margin-top:auto;"></button>
                 `;
+                card.querySelector('.gnome-name').innerText = g.name;
+                card.querySelector('.gnome-archetype').innerText = g.archetype;
+                card.querySelector('.odds-tag').innerText = g.oddsDisplay;
+                card.querySelector('.gnome-bio').innerText = `"${g.biography}"`;
+                card.querySelector('.gnome-traits').innerHTML = g.traits.map(t => `<span class="trait-pill">${t.displayName}</span>`).join('');
+                card.querySelector('.form-summary').innerText = g.careerFormSummary;
+                const btn = card.querySelector('.bet-card-btn');
+                btn.innerText = `Bet on ${g.name}`;
+                btn.addEventListener('click', () => openBetSlip(g.id, g.name, g.oddsDisplay, g.oddsQuoteId));
                 container.appendChild(card);
             });
         }
@@ -518,7 +566,7 @@
                         gnomeId: selectedGnome.id,
                         stakePennies: stakePennies,
                         oddsQuoteId: selectedOddsQuote.id,
-                        clientNonce: crypto.randomUUID()
+                        clientNonce: generateUUID()
                     })
                 });
 

@@ -26,6 +26,8 @@ public actor SessionManager {
     public private(set) var currentQuotes: [OddsQuote] = []
     public private(set) var currentBets: [String: Bet] = [:] // playerId -> Bet
     public private(set) var currentSettlements: [Settlement] = []
+    private var lastWinningGnomeId: String?
+    private var lastWinningGnomeName: String?
 
     public let ledger: BankingLedger
     public let bookmaker: BookmakerService
@@ -137,11 +139,19 @@ public actor SessionManager {
         session.currentRaceIndex = raceIndex
         session.phase = .inProgress
 
-        // Select 8 entrants (first 8 or sliced from catalogue)
-        let entrants = Array(allGnomes.prefix(8))
+        // Select 8 entrants (rotating across the full roster)
+        let entrants: [Gnome]
+        if allGnomes.count > 8 {
+            let offset = ((raceIndex - 1) * 8) % allGnomes.count
+            entrants = (0..<8).map { idx in allGnomes[(offset + idx) % allGnomes.count] }
+        } else {
+            entrants = Array(allGnomes.prefix(8))
+        }
         self.currentEntrants = entrants
         self.currentBets = [:]
         self.currentSettlements = []
+        self.lastWinningGnomeId = nil
+        self.lastWinningGnomeName = nil
 
         let course = courses[(raceIndex - 1) % courses.count]
         let raceId = "race_\(session.joinCode)_\(raceIndex)"
@@ -275,6 +285,8 @@ public actor SessionManager {
         // 2. Determine winners (rank 1)
         let winningGnomes = simResult.finishOrder.filter { $0.finishRank == 1 }
         let winningGnomeIds = winningGnomes.map { $0.gnomeId }
+        self.lastWinningGnomeId = winningGnomes.first?.gnomeId
+        self.lastWinningGnomeName = winningGnomes.first?.gnomeName
 
         // 3. Settle bets idempotently
         let settlements = try await settlementService.settleBets(
@@ -335,6 +347,20 @@ public actor SessionManager {
 
         let balance = await ledger.getBalance(playerId: playerId) ?? 0
 
+        var mySettlement: SettlementPayload? = nil
+        if race.phase == .published, let winId = lastWinningGnomeId, let winName = lastWinningGnomeName {
+            let settlement = currentSettlements.first(where: { $0.playerId == playerId })
+            let payout = settlement?.payoutPennies ?? 0
+            mySettlement = SettlementPayload(
+                raceId: race.id,
+                winningGnomeId: winId,
+                winningGnomeName: winName,
+                myPayoutPennies: payout,
+                myNewBalancePennies: balance,
+                isWinner: payout > 0
+            )
+        }
+
         return CurrentRaceViewPayload(
             raceId: race.id,
             raceIndex: race.raceIndex,
@@ -342,7 +368,8 @@ public actor SessionManager {
             courseName: course.name,
             entrants: cards,
             myBet: betTicket,
-            myBalancePennies: balance
+            myBalancePennies: balance,
+            mySettlement: mySettlement
         )
     }
 

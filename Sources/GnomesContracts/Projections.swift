@@ -119,6 +119,7 @@ public struct CurrentRaceViewPayload: Codable, Sendable {
     public let myBet: BetTicketProjection?
     public let myBalancePennies: Int
     public let secondsRemaining: Int?
+    public let mySettlement: SettlementPayload?
 
     public init(
         raceId: String,
@@ -128,7 +129,8 @@ public struct CurrentRaceViewPayload: Codable, Sendable {
         entrants: [GnomeCardProjection],
         myBet: BetTicketProjection?,
         myBalancePennies: Int,
-        secondsRemaining: Int? = nil
+        secondsRemaining: Int? = nil,
+        mySettlement: SettlementPayload? = nil
     ) {
         self.raceId = raceId
         self.raceIndex = raceIndex
@@ -138,5 +140,6 @@ public struct CurrentRaceViewPayload: Codable, Sendable {
         self.myBet = myBet
         self.myBalancePennies = myBalancePennies
         self.secondsRemaining = secondsRemaining
+        self.mySettlement = mySettlement
     }
 }
