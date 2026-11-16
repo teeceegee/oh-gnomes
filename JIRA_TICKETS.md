@@ -329,3 +329,9 @@
 | [EVD-297](https://echopost.atlassian.net/browse/EVD-297) | Subtask | **Done** | Medium | EVD-296 | Execute 20-client concurrent load and reconnection stress testing |
 | [EVD-298](https://echopost.atlassian.net/browse/EVD-298) | Subtask | **Done** | Medium | EVD-296 | Verify AirPlay screen-mirroring latency, 60fps stability, and audio sync |
 | [EVD-299](https://echopost.atlassian.net/browse/EVD-299) | Subtask | **Done** | Medium | EVD-296 | Build automated turnkey macOS .app bundle package for Argolis |
+| [EVD-300](https://echopost.atlassian.net/browse/EVD-300) | Epic | **To Do** | Medium | - | [Oh! Gnomes] Phase 2: Playtest Polish, Persistence & Grand Finale |
+| [EVD-301](https://echopost.atlassian.net/browse/EVD-301) | Task | **To Do** | Medium | EVD-300 | Grand Finale & Mystery Mode TV Leaderboard Reveal |
+| [EVD-302](https://echopost.atlassian.net/browse/EVD-302) | Task | **To Do** | Medium | EVD-300 | Wire SQLite Career Persistence & Form Evolution into OhGnomesApp |
+| [EVD-303](https://echopost.atlassian.net/browse/EVD-303) | Task | **To Do** | Medium | EVD-300 | Render Track Obstacle Props, Metal Particle Bursts & Podium Overlay |
+| [EVD-304](https://echopost.atlassian.net/browse/EVD-304) | Task | **To Do** | Medium | EVD-300 | Serve Gnome SVG Portraits to Mobile Cards & Add Place/Each-Way Betting |
+| [EVD-305](https://echopost.atlassian.net/browse/EVD-305) | Task | **To Do** | Medium | EVD-300 | Add Host QoL Controls (Countdown Timer, Mystery Mode Toggle, Reset Session) |
