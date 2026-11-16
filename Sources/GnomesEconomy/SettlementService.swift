@@ -12,6 +12,7 @@ public actor SettlementService {
         bets: [Bet],
         quotes: [OddsQuote],
         winningGnomeIds: [String],
+        placedGnomeIds: [String] = [],
         ledger: BankingLedger
     ) async throws -> [Settlement] {
         precondition(!winningGnomeIds.isEmpty, "Settlement requires at least one winning gnome")
@@ -31,13 +32,18 @@ public actor SettlementService {
                 continue
             }
 
-            let isWinner = winningGnomeIds.contains(bet.gnomeId)
+            let isWinWinner = winningGnomeIds.contains(bet.gnomeId)
+            let isPlaceWinner = bet.betMode == .place && (isWinWinner || placedGnomeIds.contains(bet.gnomeId))
+            let isWinner = (bet.betMode == .win && isWinWinner) || isPlaceWinner
 
             if isWinner {
                 let payoutPennies: Int
                 let resultType: Settlement.SettlementResult
 
-                if isDeadHeat {
+                if bet.betMode == .place {
+                    payoutPennies = bet.potentialReturnPennies
+                    resultType = .win
+                } else if isDeadHeat {
                     // Fractional dead-heat rule: stake is divided by number of dead-heat winners
                     let dividedStake = max(1, bet.stakePennies / winningGnomeIds.count)
                     payoutPennies = quote.calculateReturnPennies(forStakePennies: dividedStake)

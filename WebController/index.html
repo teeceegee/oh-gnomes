@@ -357,6 +357,10 @@
                 <h3 id="sheetGnomeName" style="margin: 0; font-size: 20px;">Bet on Gnome</h3>
                 <div id="sheetOddsTag" class="odds-tag">3/1</div>
             </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <button id="modeWinBtn" class="chip active" style="flex: 1;" onclick="setBetMode('win')">🏆 Win (1st)</button>
+                <button id="modePlaceBtn" class="chip" style="flex: 1;" onclick="setBetMode('place')">🥉 Place (Top 3 • 1/3 Odds)</button>
+            </div>
             <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
                 Potential Return: <span id="sheetPotentialReturn" style="font-weight: 800; color: #fff;">£40.00</span>
             </div>
@@ -386,6 +390,7 @@
         let selectedGnome = null;
         let selectedOddsQuote = null;
         let currentStakePounds = 10;
+        let currentBetMode = 'win';
         let ws = null;
 
         function generateUUID() {
@@ -525,11 +530,18 @@
             } else if (view.phase === 'bettingOpen') {
                 showView('viewBetting');
                 document.getElementById('bettingRaceTitle').innerText = `${view.courseName} (Race ${view.raceIndex})`;
+                const timerEl = document.getElementById('timerPill');
+                if (typeof view.secondsRemaining === 'number' && view.secondsRemaining > 0) {
+                    timerEl.innerText = `⏱ ${view.secondsRemaining}s left`;
+                } else {
+                    timerEl.innerText = '⏱ Betting Open';
+                }
 
                 if (view.myBet) {
                     // Bet is already placed
+                    const modeLabel = view.myBet.betMode === 'place' ? 'PLACE (Top 3)' : 'WIN';
                     document.getElementById('betReceiptContainer').style.display = 'block';
-                    document.getElementById('receiptGnomeName').innerText = view.myBet.gnomeName;
+                    document.getElementById('receiptGnomeName').innerText = `${view.myBet.gnomeName} (${modeLabel})`;
                     document.getElementById('receiptDetails').innerText = `Stake £${(view.myBet.stakePennies/100).toFixed(2)} @ ${view.myBet.oddsDisplay} • Return: £${(view.myBet.potentialReturnPennies/100).toFixed(2)}`;
                     document.getElementById('carouselWrapper').style.display = 'none';
                 } else {
@@ -596,9 +608,12 @@
                 card.className = 'gnome-card';
                 card.innerHTML = `
                     <div class="gnome-header">
-                        <div>
-                            <div class="gnome-name"></div>
-                            <div class="gnome-archetype"></div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <img class="gnome-portrait" src="" alt="" style="width:52px; height:52px; border-radius:12px; background:#0f172a; flex-shrink:0;" onerror="this.style.display='none'">
+                            <div>
+                                <div class="gnome-name"></div>
+                                <div class="gnome-archetype"></div>
+                            </div>
                         </div>
                         <div class="odds-tag"></div>
                     </div>
@@ -607,6 +622,7 @@
                     <div class="form-summary"></div>
                     <button class="btn-primary bet-card-btn" style="margin-top:auto;"></button>
                 `;
+                card.querySelector('.gnome-portrait').src = `/portraits/${g.id}.svg`;
                 card.querySelector('.gnome-name').innerText = g.name;
                 card.querySelector('.gnome-archetype').innerText = g.archetype;
                 card.querySelector('.odds-tag').innerText = g.oddsDisplay;
@@ -683,6 +699,13 @@
             document.getElementById('betSlipModal').classList.remove('active');
         }
 
+        function setBetMode(mode) {
+            currentBetMode = mode;
+            document.getElementById('modeWinBtn').classList.toggle('active', mode === 'win');
+            document.getElementById('modePlaceBtn').classList.toggle('active', mode === 'place');
+            setStake(currentStakePounds);
+        }
+
         function setStake(amount) {
             const maxStake = Math.max(1, Math.floor((player.balancePennies || 0) / 100));
             const numericAmount = Math.max(1, parseInt(amount) || 1);
@@ -704,7 +727,9 @@
                 const parts = selectedOddsQuote.oddsDisplay.split('/');
                 const num = parseInt(parts[0]) || 1;
                 const den = parseInt(parts[1]) || 1;
-                const potentialReturn = currentStakePounds + Math.floor((currentStakePounds * num) / den);
+                const fullProfitPennies = Math.floor((currentStakePounds * 100 * num) / den);
+                const profitPennies = currentBetMode === 'place' ? Math.max(1, Math.floor(fullProfitPennies / 3)) : fullProfitPennies;
+                const potentialReturn = (currentStakePounds * 100 + profitPennies) / 100;
                 document.getElementById('sheetPotentialReturn').innerText = `£${potentialReturn.toFixed(2)}`;
             }
         }
@@ -736,6 +761,7 @@
                         raceId: currentRaceView.raceId,
                         gnomeId: selectedGnome.id,
                         stakePennies: stakePennies,
+                        betMode: currentBetMode,
                         oddsQuoteId: selectedOddsQuote.id,
                         clientNonce: generateUUID()
                     })

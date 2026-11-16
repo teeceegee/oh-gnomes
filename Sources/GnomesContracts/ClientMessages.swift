@@ -35,13 +35,15 @@ public struct PlaceBetRequest: Codable, Sendable {
     public let raceId: String
     public let gnomeId: String
     public let stakePennies: Int
+    public let betMode: Bet.BetMode?
     public let oddsQuoteId: String
     public let clientNonce: String
 
-    public init(raceId: String, gnomeId: String, stakePennies: Int, oddsQuoteId: String, clientNonce: String = UUID().uuidString) {
+    public init(raceId: String, gnomeId: String, stakePennies: Int, betMode: Bet.BetMode? = .win, oddsQuoteId: String, clientNonce: String = UUID().uuidString) {
         self.raceId = raceId
         self.gnomeId = gnomeId
         self.stakePennies = stakePennies
+        self.betMode = betMode
         self.oddsQuoteId = oddsQuoteId
         self.clientNonce = clientNonce
     }

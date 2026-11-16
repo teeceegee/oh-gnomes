@@ -96,3 +96,9 @@
   - Fixed `ContentLoader` & `CourseLoader` to resolve `gnomes.json`, `courses.json`, and `commentary_corpus.json` from `Bundle.main.resourceURL` and flattened `Bundle.module` paths (replacing fallback `Gnome 1..8` with full 48-gnome roster).
   - Fixed port number locale comma formatting (`8,778` -> `8778`) and added live `PLAYERS X/20` counter in `HostBroadcastView`.
   - Removed overlapping SpriteKit subtitle banner, extended track runoff & added lane dividers/starting gate, color-coded gnome hats per lane, and synchronized `broadcastScene` with `sessionManager.currentEntrants` + WebSocket phase change broadcasts. Rebuilt `dist/Oh! Gnomes.app`.
+- **2026-11-16:** Pushed repository to GitHub (`https://github.com/teeceegee/oh-gnomes`), registered **Phase 3 (3D Metal/SceneKit)** Epic [EVD-306](https://echopost.atlassian.net/browse/EVD-306) (`EVD-307`–`EVD-314`), and completed **Phase 2** Epic [EVD-300](https://echopost.atlassian.net/browse/EVD-300) (`EVD-301`–`EVD-305`):
+  - **Grand Finale & Mystery Mode Reveal (`EVD-301`):** Added TV Grand Finale leaderboard overlay and champion announcement.
+  - **SQLite Career Persistence (`EVD-302`):** Wired `SQLiteDatabase` (`~/Library/Application Support/OhGnomes/gnomes.sqlite`), `GnomeRepository`, and `FormEvolutionService` into `HostViewModel` and `SessionManager`.
+  - **Track Props, Particles & Podium (`EVD-303`):** Rendered visual obstacle props, triggered `MetalParticleShaders` emitters on race incidents, and added a post-race 1st/2nd/3rd podium card.
+  - **SVG Portraits & Place Betting (`EVD-304`):** Served `/portraits/*.svg` to mobile cards and added **Win (1st)** vs **Place (Top 3 • 1/3 Odds)** betting end-to-end.
+  - **Host QoL Controls (`EVD-305`):** Added a 45-second betting countdown timer (synced to phones), Mystery/Open Mode toggle, and Reset Session control. All 31 unit tests across 8 suites passed.

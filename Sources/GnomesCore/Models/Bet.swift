@@ -6,6 +6,7 @@ public struct Bet: Codable, Sendable, Equatable, Identifiable {
     public let playerId: String
     public let gnomeId: String
     public let stakePennies: Int
+    public let betMode: BetMode
     public let oddsQuoteId: String
     public let quoteNumerator: Int
     public let quoteDenominator: Int
@@ -14,6 +15,11 @@ public struct Bet: Codable, Sendable, Equatable, Identifiable {
     public let acceptedAt: Date
 
     public static let minimumStakePennies: Int = 100 // £1.00
+
+    public enum BetMode: String, Codable, Sendable {
+        case win
+        case place // Top 3 finish, pays 1/3 win profit + stake
+    }
 
     public enum BetStatus: String, Codable, Sendable {
         case submitted
@@ -27,8 +33,14 @@ public struct Bet: Codable, Sendable, Equatable, Identifiable {
 
     public var potentialReturnPennies: Int {
         guard quoteDenominator > 0 else { return stakePennies }
-        let profit = (stakePennies * quoteNumerator) / quoteDenominator
-        return stakePennies + profit
+        let fullProfit = (stakePennies * quoteNumerator) / quoteDenominator
+        switch betMode {
+        case .win:
+            return stakePennies + fullProfit
+        case .place:
+            let placeProfit = fullProfit / 3
+            return stakePennies + max(1, placeProfit)
+        }
     }
 
     public init(
@@ -37,6 +49,7 @@ public struct Bet: Codable, Sendable, Equatable, Identifiable {
         playerId: String,
         gnomeId: String,
         stakePennies: Int,
+        betMode: BetMode = .win,
         oddsQuoteId: String,
         quoteNumerator: Int,
         quoteDenominator: Int,
@@ -49,6 +62,7 @@ public struct Bet: Codable, Sendable, Equatable, Identifiable {
         self.playerId = playerId
         self.gnomeId = gnomeId
         self.stakePennies = stakePennies
+        self.betMode = betMode
         self.oddsQuoteId = oddsQuoteId
         self.quoteNumerator = quoteNumerator
         self.quoteDenominator = quoteDenominator

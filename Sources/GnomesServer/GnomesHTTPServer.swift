@@ -162,7 +162,30 @@ public final class GnomesHTTPServer: @unchecked Sendable {
             }
         }
 
-        // 9. Root Web Controller HTML
+        // 9. Gnome SVG Portrait route
+        await server.appendRoute("/portraits/*", for: [.GET]) { request in
+            let fileName = (request.path as NSString).lastPathComponent
+            guard fileName.hasSuffix(".svg"), !fileName.contains("..") else {
+                return HTTPResponse(statusCode: .badRequest)
+            }
+            let baseName = (fileName as NSString).deletingPathExtension
+            let candidates: [URL?] = [
+                Bundle.main.resourceURL?.appendingPathComponent("Content/Portraits").appendingPathComponent(fileName),
+                ContentLoader.resourcesBundle.url(forResource: baseName, withExtension: "svg"),
+                URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+                    .appendingPathComponent("Content/Portraits")
+                    .appendingPathComponent(fileName)
+            ]
+            for case let url? in candidates {
+                if FileManager.default.fileExists(atPath: url.path),
+                   let svgData = try? Data(contentsOf: url) {
+                    return HTTPResponse(statusCode: .ok, headers: [.contentType: "image/svg+xml"], body: svgData)
+                }
+            }
+            return HTTPResponse(statusCode: .notFound)
+        }
+
+        // 10. Root Web Controller HTML
         await server.appendRoute("/", for: [.GET]) { _ in
             let candidates: [URL?] = [
                 Bundle.main.resourceURL?.appendingPathComponent("WebController/index.html"),

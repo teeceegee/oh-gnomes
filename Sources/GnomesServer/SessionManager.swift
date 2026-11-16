@@ -3,6 +3,7 @@ import GnomesCore
 import GnomesContracts
 import GnomesEconomy
 import GnomesSimulation
+import GnomesPersistence
 
 public enum SessionError: Error, Equatable {
     case sessionFull(max: Int)
@@ -28,30 +29,56 @@ public actor SessionManager {
     public private(set) var currentSettlements: [Settlement] = []
     private var lastWinningGnomeId: String?
     private var lastWinningGnomeName: String?
+    private var bettingSecondsRemaining: Int?
 
     public let ledger: BankingLedger
     public let bookmaker: BookmakerService
     public let settlementService: SettlementService
     public let formEvolutionService: FormEvolutionService
-    public let allGnomes: [Gnome]
+    public private(set) var allGnomes: [Gnome]
     public let courses: [Course]
     public let adminSecret: String
+    public let gnomeRepository: GnomeRepository?
 
     public init(
         joinCode: String = "GNOM",
         mode: ChampionshipMode = .mystery,
         allGnomes: [Gnome],
         courses: [Course] = [Course.gardenGrandPrix],
-        adminSecret: String = "admin-secret-gnomes"
+        adminSecret: String = "admin-secret-gnomes",
+        gnomeRepository: GnomeRepository? = nil
     ) {
         self.session = GameSession(joinCode: joinCode, mode: mode)
         self.allGnomes = allGnomes
         self.courses = courses
         self.adminSecret = adminSecret
+        self.gnomeRepository = gnomeRepository
         self.ledger = BankingLedger()
         self.bookmaker = BookmakerService()
         self.settlementService = SettlementService()
         self.formEvolutionService = FormEvolutionService()
+    }
+
+    public func setChampionshipMode(_ mode: ChampionshipMode) {
+        self.session.mode = mode
+    }
+
+    public func setBettingSecondsRemaining(_ seconds: Int?) {
+        self.bettingSecondsRemaining = seconds
+    }
+
+    public func resetSession() async {
+        self.session = GameSession(joinCode: session.joinCode, mode: session.mode, totalRaces: session.totalRaces)
+        self.players = [:]
+        self.allocatedGems = [:]
+        self.currentRace = nil
+        self.currentEntrants = []
+        self.currentQuotes = []
+        self.currentBets = [:]
+        self.currentSettlements = []
+        self.lastWinningGnomeId = nil
+        self.lastWinningGnomeName = nil
+        self.bettingSecondsRemaining = nil
     }
 
     // MARK: - Player Connection & Reconnection (D-01, D-05, D-10)
@@ -220,6 +247,7 @@ public actor SessionManager {
             playerId: playerId,
             gnomeId: request.gnomeId,
             stakePennies: request.stakePennies,
+            betMode: request.betMode ?? .win,
             oddsQuoteId: quote.id,
             quoteNumerator: quote.numerator,
             quoteDenominator: quote.denominator,
@@ -233,6 +261,7 @@ public actor SessionManager {
             gnomeId: bet.gnomeId,
             gnomeName: gnomeName,
             stakePennies: bet.stakePennies,
+            betMode: bet.betMode,
             oddsDisplay: quote.displayString,
             potentialReturnPennies: bet.potentialReturnPennies,
             acceptedAt: bet.acceptedAt
@@ -286,9 +315,10 @@ public actor SessionManager {
         race.resultHash = simResult.resultChecksum
         self.currentRace = race
 
-        // 2. Determine winners (rank 1)
+        // 2. Determine winners (rank 1) and placed (rank 1..3)
         let winningGnomes = simResult.finishOrder.filter { $0.finishRank == 1 }
         let winningGnomeIds = winningGnomes.map { $0.gnomeId }
+        let placedGnomeIds = simResult.finishOrder.filter { ($0.finishRank ?? 99) <= 3 }.map { $0.gnomeId }
         self.lastWinningGnomeId = winningGnomes.first?.gnomeId
         self.lastWinningGnomeName = winningGnomes.first?.gnomeName
 
@@ -298,9 +328,27 @@ public actor SessionManager {
             bets: Array(currentBets.values),
             quotes: currentQuotes,
             winningGnomeIds: winningGnomeIds,
+            placedGnomeIds: placedGnomeIds,
             ledger: ledger
         )
         self.currentSettlements = settlements
+
+        // 4. Evolve and persist gnome career form
+        for finisher in simResult.finishOrder {
+            if let idx = allGnomes.firstIndex(where: { $0.id == finisher.gnomeId }) {
+                let rank = finisher.finishRank ?? 8
+                let runnerIncidents = simResult.eventLog.filter {
+                    $0.eventType == .incidentOccurred && $0.payloadJSON.contains(finisher.gnomeId)
+                }.count
+                let evolved = formEvolutionService.evolveForm(
+                    currentCareer: allGnomes[idx].career,
+                    finishRank: rank,
+                    incidentsCount: runnerIncidents
+                )
+                allGnomes[idx].career = evolved
+                try? gnomeRepository?.updateGnomeCareer(gnomeId: allGnomes[idx].id, career: evolved)
+            }
+        }
 
         race.phase = .published
         self.currentRace = race
@@ -343,6 +391,7 @@ public actor SessionManager {
                 gnomeId: bet.gnomeId,
                 gnomeName: gnomeName,
                 stakePennies: bet.stakePennies,
+                betMode: bet.betMode,
                 oddsDisplay: "\(bet.quoteNumerator)/\(bet.quoteDenominator)",
                 potentialReturnPennies: bet.potentialReturnPennies,
                 acceptedAt: bet.acceptedAt
@@ -373,6 +422,7 @@ public actor SessionManager {
             entrants: cards,
             myBet: betTicket,
             myBalancePennies: balance,
+            secondsRemaining: bettingSecondsRemaining,
             mySettlement: mySettlement
         )
     }

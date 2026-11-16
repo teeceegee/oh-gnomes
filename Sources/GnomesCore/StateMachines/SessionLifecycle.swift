@@ -34,7 +34,7 @@ public enum SessionPhase: String, Codable, Sendable, CaseIterable {
 public struct GameSession: Codable, Sendable, Equatable, Identifiable {
     public let id: String
     public let joinCode: String
-    public let mode: ChampionshipMode
+    public var mode: ChampionshipMode
     public var phase: SessionPhase
     public var currentRaceId: String?
     public var currentRaceIndex: Int

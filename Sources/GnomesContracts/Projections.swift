@@ -53,6 +53,7 @@ public struct BetTicketProjection: Codable, Sendable {
     public let gnomeId: String
     public let gnomeName: String
     public let stakePennies: Int
+    public let betMode: Bet.BetMode?
     public let oddsDisplay: String
     public let potentialReturnPennies: Int
     public let acceptedAt: Date
@@ -62,6 +63,7 @@ public struct BetTicketProjection: Codable, Sendable {
         gnomeId: String,
         gnomeName: String,
         stakePennies: Int,
+        betMode: Bet.BetMode? = .win,
         oddsDisplay: String,
         potentialReturnPennies: Int,
         acceptedAt: Date
@@ -70,6 +72,7 @@ public struct BetTicketProjection: Codable, Sendable {
         self.gnomeId = gnomeId
         self.gnomeName = gnomeName
         self.stakePennies = stakePennies
+        self.betMode = betMode
         self.oddsDisplay = oddsDisplay
         self.potentialReturnPennies = potentialReturnPennies
         self.acceptedAt = acceptedAt

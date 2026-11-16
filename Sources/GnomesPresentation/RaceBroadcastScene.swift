@@ -106,6 +106,43 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
         finishLine.lineWidth = 2
         finishLine.zPosition = 3
         addChild(finishLine)
+
+        // Obstacle Props along the track
+        for obs in course.obstacleZones {
+            let obsX = 100.0 + CGFloat(obs.locationMeter * 25.0)
+            let propNode = SKShapeNode(rectOf: CGSize(width: 18, height: trackHeight - 60), cornerRadius: 6)
+            propNode.position = CGPoint(x: obsX, y: size.height / 2.0)
+            propNode.zPosition = 3
+
+            let label = SKLabelNode()
+            label.fontSize = 18
+            label.position = CGPoint(x: 0, y: (trackHeight / 2.0) - 20)
+
+            switch obs.obstacleType {
+            case .springLauncher:
+                propNode.fillColor = ColorType(red: 0.95, green: 0.75, blue: 0.10, alpha: 0.35)
+                propNode.strokeColor = ColorType(red: 0.95, green: 0.85, blue: 0.20, alpha: 0.8)
+                label.text = "🚀"
+            case .mudPuddle:
+                propNode.fillColor = ColorType(red: 0.32, green: 0.18, blue: 0.08, alpha: 0.65)
+                propNode.strokeColor = .clear
+                label.text = "💩"
+            case .waterSprinkler:
+                propNode.fillColor = ColorType(red: 0.20, green: 0.65, blue: 0.95, alpha: 0.35)
+                propNode.strokeColor = ColorType(red: 0.40, green: 0.80, blue: 1.0, alpha: 0.8)
+                label.text = "💦"
+            case .lowHedge:
+                propNode.fillColor = ColorType(red: 0.10, green: 0.35, blue: 0.12, alpha: 0.75)
+                propNode.strokeColor = ColorType(red: 0.25, green: 0.60, blue: 0.25, alpha: 0.9)
+                label.text = "🌿"
+            case .moleHill:
+                propNode.fillColor = ColorType(red: 0.45, green: 0.30, blue: 0.18, alpha: 0.75)
+                propNode.strokeColor = .clear
+                label.text = "⛰️"
+            }
+            propNode.addChild(label)
+            addChild(propNode)
+        }
     }
 
     private func setupRunners() {
@@ -157,6 +194,22 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
                 runner.attachGem(gem: bg.gem, playerDisplayName: bg.playerDisplayName)
             }
         }
+    }
+
+    /// Triggers Metal particle burst at a runner's position on incident
+    public func triggerIncidentEffect(gnomeId: String, type: IncidentType) {
+        guard let runner = runnerNodes.first(where: { $0.gnomeId == gnomeId }) else { return }
+        let emitter: SKEmitterNode
+        switch type {
+        case .mudSplash, .stumble:
+            emitter = MetalParticleShaders.makeMudSplashEmitter()
+        case .airborneLaunch, .sprintSurge, .sprinklerDaze, .gnomeCollision:
+            emitter = MetalParticleShaders.makeSpringDustEmitter()
+        }
+        emitter.position = runner.position
+        emitter.zPosition = 8
+        addChild(emitter)
+        emitter.run(SKAction.sequence([SKAction.wait(forDuration: 1.0), SKAction.removeFromParent()]))
     }
 
     /// Updates scene node positions from tick simulation state

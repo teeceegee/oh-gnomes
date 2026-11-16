@@ -21,20 +21,26 @@ public final class HostViewModel: ObservableObject {
     @Published public var currentRaceIndex: Int = 1
     @Published public var isRunningRace: Bool = false
     @Published public var broadcastScene: RaceBroadcastScene
+    @Published public var bettingSecondsRemaining: Int? = nil
+    @Published public var isMysteryMode: Bool = true
+    @Published public var lastRacePodium: [RunnerState] = []
+    @Published public var finaleStandings: [PlayerStanding]? = nil
 
     public let sessionManager: SessionManager
     public let httpServer: GnomesHTTPServer
     public let commentaryEngine: CommentaryEngine
     public let commentaryGenerator: ProceduralCommentaryGenerator
     public let audioFX: AudioFXSynthesizer
+    public let gnomeRepository: GnomeRepository?
 
     public let courses: [Course]
     public let allGnomes: [Gnome]
     private var playerPollTask: Task<Void, Never>?
+    private var countdownTask: Task<Void, Never>?
 
     public init() {
-        // 1. Load content
-        let gnomes = (try? ContentLoader.loadGnomes()) ?? (1...48).map { idx in
+        // 1. Load content & SQLite career persistence (internal SSD Application Support)
+        var loadedGnomes = (try? ContentLoader.loadGnomes()) ?? (1...48).map { idx in
             Gnome(
                 id: "gnome_\(idx)",
                 name: "Gnome \(idx)",
@@ -45,13 +51,37 @@ public final class HostViewModel: ObservableObject {
                 baselineAttributes: GnomeAttributes(speed: 0.7, acceleration: 0.7, stamina: 0.7, balance: 0.7, recovery: 0.7)
             )
         }
-        self.allGnomes = gnomes
+
+        var repo: GnomeRepository? = nil
+        if let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            let dbDir = appSupport.appendingPathComponent("OhGnomes")
+            try? FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
+            let dbPath = dbDir.appendingPathComponent("gnomes.sqlite").path
+            if let db = try? SQLiteDatabase(path: dbPath) {
+                let gnomeRepo = GnomeRepository(database: db)
+                if let persisted = try? gnomeRepo.loadAllGnomes(), !persisted.isEmpty {
+                    let careerMap = Dictionary(uniqueKeysWithValues: persisted.map { ($0.id, $0.career) })
+                    for i in loadedGnomes.indices {
+                        if let savedCareer = careerMap[loadedGnomes[i].id] {
+                            loadedGnomes[i].career = savedCareer
+                        }
+                    }
+                } else {
+                    for g in loadedGnomes {
+                        try? gnomeRepo.upsertGnome(g)
+                    }
+                }
+                repo = gnomeRepo
+            }
+        }
+        self.gnomeRepository = repo
+        self.allGnomes = loadedGnomes
 
         let courses = (try? CourseLoader.loadCourses()) ?? [Course.gardenGrandPrix]
         self.courses = courses
 
         let activeCourse = courses[0]
-        let raceEntrants = Array(gnomes.prefix(8))
+        let raceEntrants = Array(loadedGnomes.prefix(8))
 
         // 2. Setup presentation & audio engines
         self.broadcastScene = RaceBroadcastScene(course: activeCourse, gnomes: raceEntrants)
@@ -62,7 +92,13 @@ public final class HostViewModel: ObservableObject {
         // 3. Setup server on verified port 8778 (overrideable via OH_GNOMES_PORT)
         let portOverride = ProcessInfo.processInfo.environment["OH_GNOMES_PORT"].flatMap { UInt16($0) } ?? 8778
         self.serverPort = portOverride
-        let manager = SessionManager(joinCode: "GNOM", mode: .mystery, allGnomes: gnomes, courses: courses)
+        let manager = SessionManager(
+            joinCode: "GNOM",
+            mode: .mystery,
+            allGnomes: loadedGnomes,
+            courses: courses,
+            gnomeRepository: repo
+        )
         self.sessionManager = manager
         self.httpServer = GnomesHTTPServer(port: portOverride, sessionManager: manager)
 
@@ -133,20 +169,19 @@ public final class HostViewModel: ObservableObject {
             case .introduction:
                 try? await sessionManager.openBetting()
                 self.currentPhaseName = "Betting Open"
-                self.commentaryEngine.speak("Betting is now open for race \(currentRaceIndex)! Place your stakes on your phone!")
+                self.startBettingCountdown(seconds: 45)
+                self.commentaryEngine.speak("Betting is now open for race \(currentRaceIndex)! You have 45 seconds to place your stakes!")
                 await notifyClientsPhaseChanged()
 
             case .bettingOpen:
-                let backedGems = (try? await sessionManager.closeBetting()) ?? []
-                self.currentPhaseName = "Betting Closed"
-                self.broadcastScene.attachGems(backedGems)
-                self.commentaryEngine.speak("Betting is closed! All bets are locked and the Gnome Gems are revealed on the track!")
-                await notifyClientsPhaseChanged()
+                await closeBettingAndLock()
 
             case .bettingClosed:
                 await runRace()
 
             case .published, .archived:
+                self.lastRacePodium = []
+                self.finaleStandings = nil
                 let nextRace = await sessionManager.prepareNextRace()
                 await syncSceneToCurrentRace(race: nextRace)
                 self.currentRaceIndex += 1
@@ -157,6 +192,87 @@ public final class HostViewModel: ObservableObject {
             default:
                 break
             }
+        }
+    }
+
+    private func startBettingCountdown(seconds: Int) {
+        countdownTask?.cancel()
+        self.bettingSecondsRemaining = seconds
+        countdownTask = Task { [weak self] in
+            var remaining = seconds
+            while remaining > 0 && !Task.isCancelled {
+                await self?.sessionManager.setBettingSecondsRemaining(remaining)
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                if Task.isCancelled { return }
+                remaining -= 1
+                await MainActor.run {
+                    self?.bettingSecondsRemaining = remaining
+                }
+            }
+            if !Task.isCancelled {
+                await self?.closeBettingAndLock()
+            }
+        }
+    }
+
+    private func closeBettingAndLock() async {
+        countdownTask?.cancel()
+        countdownTask = nil
+        self.bettingSecondsRemaining = nil
+        await sessionManager.setBettingSecondsRemaining(nil)
+        guard let race = await sessionManager.currentRace, race.phase == .bettingOpen else { return }
+        let backedGems = (try? await sessionManager.closeBetting()) ?? []
+        self.currentPhaseName = "Betting Closed"
+        self.broadcastScene.attachGems(backedGems)
+        self.commentaryEngine.speak("Betting is closed! All bets are locked and the Gnome Gems are revealed on the track!")
+        await notifyClientsPhaseChanged()
+    }
+
+    public func toggleMysteryMode() {
+        Task {
+            let newMystery = !isMysteryMode
+            self.isMysteryMode = newMystery
+            await sessionManager.setChampionshipMode(newMystery ? .mystery : .open)
+            self.commentaryEngine.speak(newMystery ? "Mystery Mode enabled! Balances are hidden until the Grand Finale!" : "Open Mode enabled! Live standings are now visible!")
+        }
+    }
+
+    public func showGrandFinale() {
+        Task {
+            // Bypass Mystery Mode masking for the official TV Grand Finale reveal
+            let projection = await sessionManager.getStandingsProjection(forRole: .bigScreenBroadcast)
+            if let standings = projection.standings {
+                self.finaleStandings = standings
+            } else {
+                // Temporarily reveal standings if triggered early before totalRaces
+                await sessionManager.setChampionshipMode(.open)
+                let revealed = await sessionManager.getStandingsProjection(forRole: .bigScreenBroadcast)
+                self.finaleStandings = revealed.standings ?? []
+                if isMysteryMode {
+                    await sessionManager.setChampionshipMode(.mystery)
+                }
+            }
+            if let champ = self.finaleStandings?.first {
+                self.audioFX.playEffect(.trumpetFanfare)
+                self.commentaryEngine.speak("Ladies and gentlemen, the Grand Finale reveal! Tonight's champion is \(champ.displayName) with \(String(format: "£%.2f", Double(champ.balancePennies) / 100.0))!")
+            }
+        }
+    }
+
+    public func resetSession() {
+        Task {
+            countdownTask?.cancel()
+            countdownTask = nil
+            self.bettingSecondsRemaining = nil
+            self.lastRacePodium = []
+            self.finaleStandings = nil
+            await sessionManager.resetSession()
+            let race = await sessionManager.prepareNextRace()
+            await syncSceneToCurrentRace(race: race)
+            self.currentRaceIndex = 1
+            self.currentPhaseName = "Preparing"
+            self.commentaryEngine.speak("Session reset! Welcome back to Oh! Gnomes, Race number one!")
+            await notifyClientsPhaseChanged()
         }
     }
 
@@ -215,11 +331,13 @@ public final class HostViewModel: ObservableObject {
                 }
             }
 
-            // Live incident commentary (throttled, only before winner finishes)
-            if !announcedRanks.contains(1), engine.incidents.count > lastIncidentCount {
+            // Live incident particle FX + throttled commentary (only before winner finishes)
+            if engine.incidents.count > lastIncidentCount {
                 let newIncident = engine.incidents[lastIncidentCount]
                 lastIncidentCount = engine.incidents.count
-                if !commentaryEngine.isSpeaking && (engine.currentTick - lastCommentaryTick) >= 75 {
+                broadcastScene.triggerIncidentEffect(gnomeId: newIncident.runnerId, type: newIncident.incidentType)
+                if !announcedRanks.contains(1),
+                   !commentaryEngine.isSpeaking && (engine.currentTick - lastCommentaryTick) >= 75 {
                     lastCommentaryTick = engine.currentTick
                     let line = commentaryGenerator.commentaryForIncident(
                         runnerName: newIncident.runnerName,
@@ -258,6 +376,7 @@ public final class HostViewModel: ObservableObject {
             .filter { $0.isFinished }
             .sorted { ($0.finishRank ?? 99) < ($1.finishRank ?? 99) }
             .prefix(3)
+        self.lastRacePodium = Array(podium)
         if podium.count == 3 {
             self.subtitleText = "🏆 1st: \(podium[0].gnomeName)  •  🥈 2nd: \(podium[1].gnomeName)  •  🥉 3rd: \(podium[2].gnomeName)"
         }

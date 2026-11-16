@@ -91,31 +91,153 @@ public struct HostBroadcastView: View {
 
                     // Phase Badge & Host Controls
                     VStack(alignment: .trailing, spacing: 6) {
-                        Text(viewModel.currentPhaseName.uppercased())
-                            .font(.system(size: 12, weight: .black))
-                            .foregroundColor(.yellow)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(Color.black.opacity(0.8))
-                            .cornerRadius(6)
-
-                        Button(action: {
-                            viewModel.advancePhase()
-                        }) {
-                            Text(buttonLabelForPhase)
-                                .font(.system(size: 12, weight: .bold))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
+                        HStack(spacing: 8) {
+                            if let secs = viewModel.bettingSecondsRemaining {
+                                Text("⏱ \(secs)s")
+                                    .font(.system(size: 12, weight: .black, design: .monospaced))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(secs <= 10 ? Color.red : Color.orange)
+                                    .cornerRadius(6)
+                            }
+                            Text(viewModel.currentPhaseName.uppercased())
+                                .font(.system(size: 12, weight: .black))
+                                .foregroundColor(.yellow)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(Color.black.opacity(0.8))
                                 .cornerRadius(6)
                         }
-                        .buttonStyle(.plain)
-                        .disabled(viewModel.isRunningRace)
+
+                        HStack(spacing: 6) {
+                            Button(action: { viewModel.toggleMysteryMode() }) {
+                                Text(viewModel.isMysteryMode ? "🕵️ Mystery" : "👁 Open")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                                    .background(Color.purple.opacity(0.85))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(6)
+                            }
+                            .buttonStyle(.plain)
+
+                            Button(action: { viewModel.showGrandFinale() }) {
+                                Text("🏆 Finale")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                                    .background(Color.orange.opacity(0.9))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(6)
+                            }
+                            .buttonStyle(.plain)
+
+                            Button(action: { viewModel.resetSession() }) {
+                                Text("↺ Reset")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                                    .background(Color.gray.opacity(0.75))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(6)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(viewModel.isRunningRace)
+
+                            Button(action: {
+                                viewModel.advancePhase()
+                            }) {
+                                Text(buttonLabelForPhase)
+                                    .font(.system(size: 12, weight: .bold))
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(6)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(viewModel.isRunningRace)
+                        }
                     }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 16)
+
+                Spacer()
+
+                // Grand Finale Leaderboard Reveal Overlay
+                if let standings = viewModel.finaleStandings {
+                    VStack(spacing: 12) {
+                        HStack {
+                            Text("🏆 GRAND FINALE STANDINGS")
+                                .font(.system(size: 26, weight: .black, design: .rounded))
+                                .foregroundColor(.yellow)
+                            Spacer()
+                            Button("Close ✕") {
+                                viewModel.finaleStandings = nil
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundColor(.white.opacity(0.8))
+                        }
+                        if standings.isEmpty {
+                            Text("No players joined yet.")
+                                .foregroundColor(.white.opacity(0.7))
+                        } else {
+                            ForEach(Array(standings.enumerated()), id: \.element.id) { idx, p in
+                                HStack {
+                                    Text(idx == 0 ? "🥇" : idx == 1 ? "🥈" : idx == 2 ? "🥉" : "#\(idx + 1)")
+                                        .font(.system(size: 20, weight: .bold))
+                                        .frame(width: 36)
+                                    Text("\(p.gem.iconSymbol) \(p.displayName)")
+                                        .font(.system(size: 18, weight: .bold))
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                    Text(String(format: "£%.2f", Double(p.balancePennies) / 100.0))
+                                        .font(.system(size: 18, weight: .black, design: .monospaced))
+                                        .foregroundColor(.green)
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(Color.white.opacity(idx == 0 ? 0.14 : 0.06))
+                                .cornerRadius(8)
+                            }
+                        }
+                    }
+                    .padding(24)
+                    .frame(maxWidth: 580)
+                    .background(Color.black.opacity(0.9))
+                    .cornerRadius(16)
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.yellow.opacity(0.6), lineWidth: 2))
+                    .shadow(radius: 20)
+                } else if !viewModel.lastRacePodium.isEmpty {
+                    // Post-Race Podium Card
+                    VStack(spacing: 8) {
+                        Text("🏁 OFFICIAL PODIUM — RACE #\(viewModel.currentRaceIndex)")
+                            .font(.system(size: 15, weight: .black))
+                            .foregroundColor(.yellow)
+                        HStack(spacing: 16) {
+                            ForEach(Array(viewModel.lastRacePodium.enumerated()), id: \.element.gnomeId) { idx, r in
+                                VStack(spacing: 4) {
+                                    Text(idx == 0 ? "🥇 1st" : idx == 1 ? "🥈 2nd" : "🥉 3rd")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(idx == 0 ? .yellow : .white)
+                                    Text(r.gnomeName)
+                                        .font(.system(size: 15, weight: .heavy))
+                                        .foregroundColor(.white)
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(Color.white.opacity(0.1))
+                                .cornerRadius(10)
+                            }
+                        }
+                    }
+                    .padding(16)
+                    .background(Color.black.opacity(0.85))
+                    .cornerRadius(14)
+                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.white.opacity(0.2), lineWidth: 1))
+                }
 
                 Spacer()
 
