@@ -3,6 +3,11 @@ import GnomesCore
 
 public enum CourseLoader {
     private static func findCourseURL() -> URL? {
+        if let mainRes = Bundle.main.resourceURL?.appendingPathComponent("Content/Courses/courses.json"),
+           FileManager.default.fileExists(atPath: mainRes.path) {
+            return mainRes
+        }
+
         #if SWIFT_PACKAGE
         if let bundleUrl = ContentLoader.resourcesBundle.url(forResource: "courses", withExtension: "json") {
             return bundleUrl

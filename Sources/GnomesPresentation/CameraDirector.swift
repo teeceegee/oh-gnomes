@@ -20,7 +20,7 @@ public final class CameraDirector: @unchecked Sendable {
         self.currentMode = mode
         switch mode {
         case .startLine:
-            targetPosition = CGPoint(x: trackBounds.minX + 300, y: trackBounds.midY)
+            targetPosition = CGPoint(x: trackBounds.minX + 900, y: trackBounds.midY)
             targetScale = 1.0
         case .packLead:
             targetScale = 0.95

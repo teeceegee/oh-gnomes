@@ -40,15 +40,33 @@ public enum ContentLoader {
     }
 
     private static func findContentURL(subpath: String) -> URL? {
-        // 1. Try Bundle.module if available
+        // 1. Try Bundle.main Content directory (for packaged .app bundle)
+        if let mainRes = Bundle.main.resourceURL?
+            .appendingPathComponent("Content")
+            .appendingPathComponent(subpath),
+           FileManager.default.fileExists(atPath: mainRes.path) {
+            return mainRes
+        }
+
+        // 2. Try Bundle.module (flattened by SPM .process("Resources") or with subpath)
         #if SWIFT_PACKAGE
-        if let bundleUrl = Bundle.module.url(forResource: (subpath as NSString).deletingPathExtension,
-                                             withExtension: (subpath as NSString).pathExtension) {
+        let nsSubpath = subpath as NSString
+        let lastComponent = nsSubpath.lastPathComponent as NSString
+        if let bundleUrl = Bundle.module.url(
+            forResource: lastComponent.deletingPathExtension,
+            withExtension: lastComponent.pathExtension
+        ) {
+            return bundleUrl
+        }
+        if let bundleUrl = Bundle.module.url(
+            forResource: nsSubpath.deletingPathExtension,
+            withExtension: nsSubpath.pathExtension
+        ) {
             return bundleUrl
         }
         #endif
 
-        // 2. Try environment variable override
+        // 3. Try environment variable override
         if let envDir = ProcessInfo.processInfo.environment["OH_GNOMES_CONTENT_DIR"] {
             let envUrl = URL(fileURLWithPath: envDir).appendingPathComponent(subpath)
             if FileManager.default.fileExists(atPath: envUrl.path) {
@@ -56,7 +74,7 @@ public enum ContentLoader {
             }
         }
 
-        // 3. Fallback to local workspace Content/ directory
+        // 4. Fallback to local workspace Content/ directory
         let localCandidate = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
             .appendingPathComponent("Content")
             .appendingPathComponent(subpath)

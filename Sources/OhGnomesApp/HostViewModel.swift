@@ -20,6 +20,7 @@ public final class HostViewModel: ObservableObject {
     @Published public var subtitleText: String = "Welcome to Oh! Gnomes — Connect on your mobile to join!"
     @Published public var currentRaceIndex: Int = 1
     @Published public var isRunningRace: Bool = false
+    @Published public var broadcastScene: RaceBroadcastScene
 
     public let sessionManager: SessionManager
     public let httpServer: GnomesHTTPServer
@@ -27,9 +28,9 @@ public final class HostViewModel: ObservableObject {
     public let commentaryGenerator: ProceduralCommentaryGenerator
     public let audioFX: AudioFXSynthesizer
 
-    public var broadcastScene: RaceBroadcastScene
     public let courses: [Course]
     public let allGnomes: [Gnome]
+    private var playerPollTask: Task<Void, Never>?
 
     public init() {
         // 1. Load content
@@ -74,50 +75,85 @@ public final class HostViewModel: ObservableObject {
         }
     }
 
+    private var hasStarted = false
+
     public func start() {
+        guard !hasStarted else { return }
+        hasStarted = true
+
         Task {
             do {
                 try await httpServer.start()
                 let race = await sessionManager.prepareNextRace()
+                await syncSceneToCurrentRace(race: race)
                 self.currentPhaseName = race.phase.rawValue.capitalized
                 self.commentaryEngine.speak("Welcome to Oh! Gnomes! Point your phones at the screen to join race number one!")
+
+                // Poll connected players count
+                playerPollTask = Task { [weak self] in
+                    while !Task.isCancelled {
+                        guard let self = self else { break }
+                        let count = await self.sessionManager.players.count
+                        await MainActor.run {
+                            self.connectedPlayersCount = count
+                        }
+                        try? await Task.sleep(nanoseconds: 1_000_000_000)
+                    }
+                }
             } catch {
                 print("Failed to start HTTP server: \(error)")
             }
         }
     }
 
+    private func syncSceneToCurrentRace(race: Race) async {
+        let entrants = await sessionManager.currentEntrants
+        let course = courses.first(where: { $0.id == race.courseId }) ?? courses[0]
+        self.broadcastScene = RaceBroadcastScene(course: course, gnomes: entrants)
+    }
+
+    private func notifyClientsPhaseChanged() async {
+        let envelope = ServerEnvelope(type: .phaseChanged, payloadJSON: "{\"refresh\":true}")
+        await httpServer.wsGateway.broadcast(envelope: envelope)
+    }
+
     public func advancePhase() {
         Task {
             guard let race = await sessionManager.currentRace else { return }
+            let course = courses.first(where: { $0.id == race.courseId }) ?? courses[0]
 
             switch race.phase {
             case .preparing:
                 try? await sessionManager.startIntroduction()
                 self.currentPhaseName = "Introduction"
                 self.audioFX.playEffect(.trumpetFanfare)
-                let introSpeech = commentaryGenerator.commentaryForStart(courseName: courses[0].name, entrantsCount: 8)
+                let introSpeech = commentaryGenerator.commentaryForStart(courseName: course.name, entrantsCount: 8)
                 self.commentaryEngine.speak(introSpeech)
+                await notifyClientsPhaseChanged()
 
             case .introduction:
                 try? await sessionManager.openBetting()
                 self.currentPhaseName = "Betting Open"
                 self.commentaryEngine.speak("Betting is now open! Place your stakes on your phone!")
+                await notifyClientsPhaseChanged()
 
             case .bettingOpen:
                 let backedGems = (try? await sessionManager.closeBetting()) ?? []
                 self.currentPhaseName = "Betting Closed"
                 self.broadcastScene.attachGems(backedGems)
                 self.commentaryEngine.speak("Betting is closed! Gems are revealed, runners take your marks!")
+                await notifyClientsPhaseChanged()
 
             case .bettingClosed:
                 await runRace()
 
             case .published, .archived:
-                _ = await sessionManager.prepareNextRace()
+                let nextRace = await sessionManager.prepareNextRace()
+                await syncSceneToCurrentRace(race: nextRace)
                 self.currentRaceIndex += 1
                 self.currentPhaseName = "Preparing"
                 self.commentaryEngine.speak("Prepare for the next race!")
+                await notifyClientsPhaseChanged()
 
             default:
                 break
@@ -134,7 +170,7 @@ public final class HostViewModel: ObservableObject {
         self.audioFX.playEffect(.startingGun)
         self.commentaryEngine.speak("And they're off!")
 
-        let course = courses[0]
+        let course = courses.first(where: { $0.id == race.courseId }) ?? courses[0]
         let seed = UInt64.random(in: 1...1_000_000)
         let entrants = await sessionManager.currentEntrants
 
@@ -173,5 +209,6 @@ public final class HostViewModel: ObservableObject {
 
         self.currentPhaseName = "Race Finished (Settled)"
         isRunningRace = false
+        await notifyClientsPhaseChanged()
     }
 }

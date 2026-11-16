@@ -40,14 +40,24 @@ public final class RunnerNode: SKNode, @unchecked Sendable {
         beardNode.strokeColor = .clear
         bodyNode.addChild(beardNode)
 
-        // 3. Pointy Red Hat
+        // 3. Pointy Hat (color-coded by lane)
+        let hatPalette: [ColorType] = [
+            ColorType(red: 0.90, green: 0.22, blue: 0.22, alpha: 1.0), // Crimson
+            ColorType(red: 0.20, green: 0.60, blue: 0.95, alpha: 1.0), // Sky Blue
+            ColorType(red: 0.95, green: 0.75, blue: 0.15, alpha: 1.0), // Gold
+            ColorType(red: 0.60, green: 0.30, blue: 0.85, alpha: 1.0), // Royal Purple
+            ColorType(red: 0.95, green: 0.45, blue: 0.15, alpha: 1.0), // Tangerine
+            ColorType(red: 0.15, green: 0.80, blue: 0.65, alpha: 1.0), // Teal
+            ColorType(red: 0.92, green: 0.35, blue: 0.65, alpha: 1.0), // Magenta
+            ColorType(red: 0.45, green: 0.85, blue: 0.25, alpha: 1.0)  // Lime
+        ]
         let hatPath = CGMutablePath()
         hatPath.move(to: CGPoint(x: -12, y: 6))
         hatPath.addLine(to: CGPoint(x: 0, y: 26))
         hatPath.addLine(to: CGPoint(x: 12, y: 6))
         hatPath.closeSubpath()
         self.hatNode = SKShapeNode(path: hatPath)
-        hatNode.fillColor = ColorType(red: 0.9, green: 0.2, blue: 0.2, alpha: 1.0)
+        hatNode.fillColor = hatPalette[(max(1, lane) - 1) % hatPalette.count]
         hatNode.strokeColor = .white
         hatNode.lineWidth = 1.0
         bodyNode.addChild(hatNode)

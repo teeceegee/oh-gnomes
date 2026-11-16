@@ -159,17 +159,29 @@ public final class GnomesHTTPServer: @unchecked Sendable {
             }
         }
 
-        // 8. Root Web Controller HTML
+        // 9. Root Web Controller HTML
         await server.appendRoute("/", for: [.GET]) { _ in
-            let localPath = "WebController/index.html"
-            if let fileData = try? Data(contentsOf: URL(fileURLWithPath: localPath)) {
-                return HTTPResponse(statusCode: .ok, headers: [.contentType: "text/html; charset=utf-8"], body: fileData)
+            let candidates: [URL?] = [
+                Bundle.main.resourceURL?.appendingPathComponent("WebController/index.html"),
+                ProcessInfo.processInfo.environment["OH_GNOMES_WEB_DIR"].map {
+                    URL(fileURLWithPath: $0).appendingPathComponent("index.html")
+                },
+                URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+                    .appendingPathComponent("WebController/index.html")
+            ]
+
+            for case let url? in candidates {
+                if FileManager.default.fileExists(atPath: url.path),
+                   let fileData = try? Data(contentsOf: url) {
+                    return HTTPResponse(statusCode: .ok, headers: [.contentType: "text/html; charset=utf-8"], body: fileData)
+                }
             }
+
             let html = """
             <!DOCTYPE html>
             <html lang="en">
             <head><title>Oh! Gnomes</title></head>
-            <body><h1>Oh! Gnomes Mobile Controller</h1></body>
+            <body><h1>Oh! Gnomes Mobile Controller</h1><p>WebController/index.html could not be located.</p></body>
             </html>
             """
             return HTTPResponse(statusCode: .ok, headers: [.contentType: "text/html; charset=utf-8"], body: Data(html.utf8))

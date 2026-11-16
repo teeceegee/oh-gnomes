@@ -41,7 +41,7 @@ public struct HostBroadcastView: View {
                             Text("JOIN ON YOUR PHONE")
                                 .font(.system(size: 10, weight: .heavy))
                                 .foregroundColor(.white.opacity(0.7))
-                            Text("http://\(viewModel.lanAddress):\(viewModel.serverPort)/")
+                            Text(verbatim: "http://\(viewModel.lanAddress):\(String(viewModel.serverPort))/")
                                 .font(.system(size: 15, weight: .bold, design: .monospaced))
                                 .foregroundColor(.cyan)
                         }
@@ -57,6 +57,15 @@ public struct HostBroadcastView: View {
                                 .padding(.vertical, 3)
                                 .background(Color.red.opacity(0.85))
                                 .cornerRadius(6)
+                        }
+
+                        VStack(alignment: .center, spacing: 2) {
+                            Text("PLAYERS")
+                                .font(.system(size: 10, weight: .heavy))
+                                .foregroundColor(.white.opacity(0.7))
+                            Text("\(viewModel.connectedPlayersCount)/20")
+                                .font(.system(size: 15, weight: .bold, design: .monospaced))
+                                .foregroundColor(.green)
                         }
                     }
                     .padding(.horizontal, 16)

@@ -45,8 +45,9 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
         let trackWidth = CGFloat(course.totalDistanceMeters * 25.0) // 25 pixels per meter
         let trackHeight: CGFloat = 8 * 70.0 + 100.0 // 8 lanes @ 70px
 
-        // Track surface background
-        let trackBg = SKShapeNode(rectOf: CGSize(width: trackWidth, height: trackHeight), cornerRadius: 16)
+        // Track surface background (extended with runoff left & right so camera never sees void)
+        let runoffWidth = trackWidth + 2400.0
+        let trackBg = SKShapeNode(rectOf: CGSize(width: runoffWidth, height: trackHeight), cornerRadius: 16)
         trackBg.position = CGPoint(x: trackWidth / 2.0, y: size.height / 2.0)
         trackBg.fillColor = ColorType(red: 0.22, green: 0.45, blue: 0.25, alpha: 1.0) // Lush green grass
         trackBg.strokeColor = .clear
@@ -54,8 +55,8 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
 
         // Draw surface zones (e.g. mud pit)
         for zone in course.surfaceZones {
-            let startX = CGFloat(zone.startMeter * 25.0)
-            let endX = CGFloat(zone.endMeter * 25.0)
+            let startX = 100.0 + CGFloat(zone.startMeter * 25.0)
+            let endX = 100.0 + CGFloat(zone.endMeter * 25.0)
             let zoneWidth = endX - startX
             let zoneNode = SKShapeNode(rectOf: CGSize(width: zoneWidth, height: trackHeight))
             zoneNode.position = CGPoint(x: startX + (zoneWidth / 2.0), y: size.height / 2.0)
@@ -74,13 +75,36 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
             addChild(zoneNode)
         }
 
+        // Lane divider lines
+        let startY = (size.height / 2.0) + (4 * 70.0)
+        for laneIdx in 0...8 {
+            let lineY = startY - CGFloat(laneIdx * 70)
+            let lanePath = CGMutablePath()
+            lanePath.move(to: CGPoint(x: 100.0, y: lineY))
+            lanePath.addLine(to: CGPoint(x: 100.0 + trackWidth, y: lineY))
+            let laneLine = SKShapeNode(path: lanePath)
+            laneLine.strokeColor = ColorType(white: 1.0, alpha: 0.22)
+            laneLine.lineWidth = 2.0
+            laneLine.zPosition = 2
+            addChild(laneLine)
+        }
+
+        // Starting Line
+        let startLine = SKShapeNode(rectOf: CGSize(width: 8, height: trackHeight - 40))
+        startLine.position = CGPoint(x: 100.0, y: size.height / 2.0)
+        startLine.fillColor = ColorType(white: 1.0, alpha: 0.85)
+        startLine.strokeColor = .clear
+        startLine.zPosition = 3
+        addChild(startLine)
+
         // Finish Line
-        let finishX = trackWidth - 100.0
+        let finishX = 100.0 + trackWidth
         let finishLine = SKShapeNode(rectOf: CGSize(width: 20, height: trackHeight))
         finishLine.position = CGPoint(x: finishX, y: size.height / 2.0)
         finishLine.fillColor = .white
         finishLine.strokeColor = .red
         finishLine.lineWidth = 2
+        finishLine.zPosition = 3
         addChild(finishLine)
     }
 
@@ -99,28 +123,12 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
     private func setupCamera() {
         addChild(broadcastCamera)
         self.camera = broadcastCamera
-        broadcastCamera.position = CGPoint(x: 400, y: size.height / 2.0)
+        broadcastCamera.position = CGPoint(x: 900, y: size.height / 2.0)
         cameraDirector.setMode(.startLine, trackBounds: CGRect(x: 0, y: 0, width: course.totalDistanceMeters * 25.0, height: size.height))
     }
 
     private func setupHUD() {
-        // Subtitle Banner at bottom of camera view
-        let bannerBg = SKShapeNode(rectOf: CGSize(width: 1400, height: 70), cornerRadius: 12)
-        bannerBg.fillColor = ColorType(white: 0.0, alpha: 0.75)
-        bannerBg.strokeColor = ColorType(white: 1.0, alpha: 0.2)
-        bannerBg.position = CGPoint(x: 0, y: -450)
-        subtitleBanner.addChild(bannerBg)
-
-        subtitleLabel.fontName = "HelveticaNeue-Bold"
-        subtitleLabel.fontSize = 24
-        subtitleLabel.fontColor = .white
-        subtitleLabel.position = CGPoint(x: 0, y: -460)
-        subtitleLabel.horizontalAlignmentMode = .center
-        subtitleBanner.addChild(subtitleLabel)
-
-        broadcastCamera.addChild(subtitleBanner)
-
-        // Photo finish banner
+        // Photo finish banner (subtitles are rendered cleanly by the SwiftUI host overlay)
         photoFinishBanner.fontName = "HelveticaNeue-Black"
         photoFinishBanner.fontSize = 42
         photoFinishBanner.fontColor = .yellow
