@@ -1,9 +1,11 @@
 import SwiftUI
 import SpriteKit
+import CoreImage.CIFilterBuiltins
 import GnomesPresentation
 
 public struct HostBroadcastView: View {
     @ObservedObject var viewModel: HostViewModel
+    private let ciContext = CIContext()
 
     public init(viewModel: HostViewModel) {
         self.viewModel = viewModel
@@ -36,8 +38,19 @@ public struct HostBroadcastView: View {
 
                     Spacer()
 
-                    // Join Code & URL Banner
+                    // Join Code, QR Code & URL Banner
                     HStack(spacing: 16) {
+                        if let qrImage = generateQRCode(from: "http://\(viewModel.lanAddress):\(String(viewModel.serverPort))/") {
+                            Image(nsImage: qrImage)
+                                .interpolation(.none)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 56, height: 56)
+                                .padding(4)
+                                .background(Color.white)
+                                .cornerRadius(6)
+                        }
+
                         VStack(alignment: .trailing, spacing: 2) {
                             Text("JOIN ON YOUR PHONE")
                                 .font(.system(size: 10, weight: .heavy))
@@ -140,5 +153,16 @@ public struct HostBroadcastView: View {
         default:
             return "Next Race ▶▶"
         }
+    }
+
+    private func generateQRCode(from string: String) -> NSImage? {
+        let filter = CIFilter.qrCodeGenerator()
+        filter.message = Data(string.utf8)
+        filter.correctionLevel = "M"
+
+        guard let outputImage = filter.outputImage else { return nil }
+        let scaled = outputImage.transformed(by: CGAffineTransform(scaleX: 6, y: 6))
+        guard let cgImage = ciContext.createCGImage(scaled, from: scaled.extent) else { return nil }
+        return NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
     }
 }

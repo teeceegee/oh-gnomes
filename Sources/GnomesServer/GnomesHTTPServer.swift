@@ -112,8 +112,8 @@ public final class GnomesHTTPServer: @unchecked Sendable {
             guard let self = self else { return HTTPResponse(statusCode: .internalServerError) }
             do {
                 let playerId = request.headers[HTTPHeader("X-Player-ID")] ?? ""
-                guard !playerId.isEmpty else {
-                    return HTTPResponse(statusCode: .unauthorized, body: Data("{\"error\":\"Missing X-Player-ID\"}".utf8))
+                guard !playerId.isEmpty, await self.sessionManager.hasPlayer(playerId) else {
+                    return HTTPResponse(statusCode: .unauthorized, headers: [.contentType: "application/json"], body: Data("{\"error\":\"Session expired. Please rejoin.\"}".utf8))
                 }
                 let bodyData = try await request.bodyData
                 let decoder = JSONDecoder()
@@ -125,7 +125,7 @@ public final class GnomesHTTPServer: @unchecked Sendable {
                 let data = try encoder.encode(ticket)
                 return HTTPResponse(statusCode: .ok, headers: [.contentType: "application/json"], body: data)
             } catch {
-                return HTTPResponse(statusCode: .badRequest, body: Data("{\"error\":\"\(error)\"}".utf8))
+                return HTTPResponse(statusCode: .badRequest, headers: [.contentType: "application/json"], body: Data("{\"error\":\"\(error)\"}".utf8))
             }
         }
 
@@ -147,6 +147,9 @@ public final class GnomesHTTPServer: @unchecked Sendable {
         await server.appendRoute("/api/race/current", for: [.GET]) { [weak self] request in
             guard let self = self else { return HTTPResponse(statusCode: .internalServerError) }
             let playerId = request.headers[HTTPHeader("X-Player-ID")] ?? ""
+            if playerId.hasPrefix("p_"), !(await self.sessionManager.hasPlayer(playerId)) {
+                return HTTPResponse(statusCode: .unauthorized, headers: [.contentType: "application/json"], body: Data("{\"error\":\"Session expired\"}".utf8))
+            }
             if let view = await self.sessionManager.getCurrentRaceView(forPlayerId: playerId) {
                 let encoder = JSONEncoder()
                 encoder.dateEncodingStrategy = .iso8601

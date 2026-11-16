@@ -106,14 +106,68 @@
         .btn-green { background: var(--accent-green); }
 
         /* Card Carousel */
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+        }
         .carousel-container {
             display: flex;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
             gap: 14px;
-            padding-bottom: 16px;
+            padding: 4px 16px 12px 16px;
             width: 100%;
             -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        .carousel-container:active {
+            cursor: grabbing;
+        }
+        .carousel-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .swipe-btn {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .swipe-btn:active { background: var(--accent-blue); }
+        .carousel-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .carousel-dot.active {
+            width: 20px;
+            border-radius: 4px;
+            background: var(--accent-blue);
         }
         .gnome-card {
             flex: 0 0 85%;
@@ -261,7 +315,14 @@
                 </div>
             </div>
 
-            <div id="cardDeckBrowser" class="carousel-container"></div>
+            <div id="carouselWrapper" class="carousel-wrapper">
+                <div id="cardDeckBrowser" class="carousel-container"></div>
+                <div id="carouselControls" class="carousel-controls">
+                    <button class="swipe-btn" onclick="scrollCarousel(-1)" aria-label="Previous gnome">‹</button>
+                    <div id="carouselDots" class="carousel-dots"></div>
+                    <button class="swipe-btn" onclick="scrollCarousel(1)" aria-label="Next gnome">›</button>
+                </div>
+            </div>
         </section>
 
         <!-- 4. LIVE RACE TRACKER VIEW -->
@@ -304,13 +365,13 @@
             <input type="range" id="stakeSlider" min="1" max="500" value="10" step="1" style="width: 100%; accent-color: var(--accent-green);">
 
             <div class="chips-row">
-                <button class="chip" onclick="setStake(1)">£1</button>
-                <button class="chip" onclick="setStake(5)">£5</button>
-                <button class="chip active" onclick="setStake(10)">£10</button>
-                <button class="chip" onclick="setStake(25)">£25</button>
-                <button class="chip" onclick="setStake(50)">£50</button>
-                <button class="chip" onclick="setStake(100)">£100</button>
-                <button class="chip" onclick="setAllIn()">All In</button>
+                <button class="chip" data-stake="1" onclick="setStake(1)">£1</button>
+                <button class="chip" data-stake="5" onclick="setStake(5)">£5</button>
+                <button class="chip" data-stake="10" onclick="setStake(10)">£10</button>
+                <button class="chip" data-stake="25" onclick="setStake(25)">£25</button>
+                <button class="chip" data-stake="50" onclick="setStake(50)">£50</button>
+                <button class="chip" data-stake="100" onclick="setStake(100)">£100</button>
+                <button class="chip" data-stake="allin" onclick="setAllIn()">All In</button>
             </div>
 
             <button id="confirmBetBtn" class="btn-primary btn-green" onclick="submitBet()">Confirm Bet (£10)</button>
@@ -414,12 +475,30 @@
             fetchCurrentRace();
         }
 
+        function resetToJoin(message) {
+            localStorage.removeItem('oh_gnomes_player');
+            player = null;
+            currentRaceView = null;
+            document.getElementById('playerHeaderInfo').style.display = 'none';
+            closeBetSlip();
+            showView('viewJoin');
+            if (message) {
+                const status = document.getElementById('joinStatus');
+                status.innerText = message;
+                status.style.color = '#f59e0b';
+            }
+        }
+
         async function fetchCurrentRace() {
             if (!player) return;
             try {
                 const res = await fetch('/api/race/current', {
                     headers: { 'X-Player-ID': player.playerId }
                 });
+                if (res.status === 401) {
+                    resetToJoin('Session restarted — please rejoin!');
+                    return;
+                }
                 if (res.ok) {
                     const data = await res.json();
                     currentRaceView = data;
@@ -452,10 +531,10 @@
                     document.getElementById('betReceiptContainer').style.display = 'block';
                     document.getElementById('receiptGnomeName').innerText = view.myBet.gnomeName;
                     document.getElementById('receiptDetails').innerText = `Stake £${(view.myBet.stakePennies/100).toFixed(2)} @ ${view.myBet.oddsDisplay} • Return: £${(view.myBet.potentialReturnPennies/100).toFixed(2)}`;
-                    document.getElementById('cardDeckBrowser').style.display = 'none';
+                    document.getElementById('carouselWrapper').style.display = 'none';
                 } else {
                     document.getElementById('betReceiptContainer').style.display = 'none';
-                    document.getElementById('cardDeckBrowser').style.display = 'flex';
+                    document.getElementById('carouselWrapper').style.display = 'block';
                     renderCards(view.entrants);
                 }
             } else if (view.phase === 'bettingClosed' || view.phase === 'simulating' || view.phase === 'presentationFinished' || view.phase === 'settling') {
@@ -471,11 +550,48 @@
             }
         }
 
+        let currentCardIndex = 0;
+
+        function scrollCarousel(direction) {
+            const container = document.getElementById('cardDeckBrowser');
+            const cards = container.querySelectorAll('.gnome-card');
+            if (!cards.length) return;
+            currentCardIndex = Math.max(0, Math.min(cards.length - 1, currentCardIndex + direction));
+            cards[currentCardIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            updateCarouselDots();
+        }
+
+        function jumpToCard(index) {
+            const container = document.getElementById('cardDeckBrowser');
+            const cards = container.querySelectorAll('.gnome-card');
+            if (!cards[index]) return;
+            currentCardIndex = index;
+            cards[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            updateCarouselDots();
+        }
+
+        function updateCarouselDots() {
+            const dots = document.querySelectorAll('#carouselDots .carousel-dot');
+            dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentCardIndex));
+        }
+
+        let lastRenderedRaceId = null;
+
         function renderCards(entrants) {
             const container = document.getElementById('cardDeckBrowser');
-            container.innerHTML = '';
+            const dotsContainer = document.getElementById('carouselDots');
 
-            entrants.forEach(g => {
+            // Preserve scroll position when 3s background poll refreshes during bettingOpen
+            if (lastRenderedRaceId === (currentRaceView && currentRaceView.raceId) && container.children.length === entrants.length) {
+                return;
+            }
+            lastRenderedRaceId = currentRaceView ? currentRaceView.raceId : null;
+            currentCardIndex = 0;
+
+            container.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            entrants.forEach((g, idx) => {
                 const card = document.createElement('div');
                 card.className = 'gnome-card';
                 card.innerHTML = `
@@ -501,7 +617,50 @@
                 btn.innerText = `Bet on ${g.name}`;
                 btn.addEventListener('click', () => openBetSlip(g.id, g.name, g.oddsDisplay, g.oddsQuoteId));
                 container.appendChild(card);
+
+                const dot = document.createElement('div');
+                dot.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
+                dot.addEventListener('click', () => jumpToCard(idx));
+                dotsContainer.appendChild(dot);
             });
+
+            // Sync active dot on swipe scroll
+            container.onscroll = () => {
+                const cards = container.querySelectorAll('.gnome-card');
+                if (!cards.length) return;
+                const center = container.scrollLeft + container.clientWidth / 2;
+                let closestIdx = 0;
+                let minDist = Infinity;
+                cards.forEach((c, i) => {
+                    const cardCenter = c.offsetLeft + c.offsetWidth / 2;
+                    const d = Math.abs(center - cardCenter);
+                    if (d < minDist) {
+                        minDist = d;
+                        closestIdx = i;
+                    }
+                });
+                if (closestIdx !== currentCardIndex) {
+                    currentCardIndex = closestIdx;
+                    updateCarouselDots();
+                }
+            };
+
+            // Mouse / pointer drag-to-swipe for desktop Safari
+            let isDown = false, startX = 0, scrollStart = 0;
+            container.onmousedown = (e) => {
+                if (e.target.tagName === 'BUTTON') return;
+                isDown = true;
+                startX = e.pageX - container.offsetLeft;
+                scrollStart = container.scrollLeft;
+            };
+            container.onmouseleave = () => { isDown = false; };
+            container.onmouseup = () => { isDown = false; };
+            container.onmousemove = (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                container.scrollLeft = scrollStart - (x - startX) * 1.4;
+            };
         }
 
         function openBetSlip(gnomeId, name, oddsDisplay, oddsQuoteId) {
@@ -525,11 +684,20 @@
         }
 
         function setStake(amount) {
-            const maxStake = Math.max(1, Math.floor(player.balancePennies / 100));
-            currentStakePounds = Math.min(amount, maxStake);
+            const maxStake = Math.max(1, Math.floor((player.balancePennies || 0) / 100));
+            const numericAmount = Math.max(1, parseInt(amount) || 1);
+            currentStakePounds = Math.min(numericAmount, maxStake);
             document.getElementById('stakeSlider').value = currentStakePounds;
             document.getElementById('stakeDisplay').innerText = `£${currentStakePounds}`;
             document.getElementById('confirmBetBtn').innerText = `Confirm Bet (£${currentStakePounds})`;
+
+            // Sync active chip highlighting
+            document.querySelectorAll('.chips-row .chip').forEach(chip => {
+                const chipStake = chip.getAttribute('data-stake');
+                const isAllIn = chipStake === 'allin' && currentStakePounds === maxStake;
+                const isExact = chipStake !== 'allin' && parseInt(chipStake) === currentStakePounds;
+                chip.classList.toggle('active', isAllIn || isExact);
+            });
 
             // Calculate return
             if (selectedOddsQuote) {
@@ -544,9 +712,12 @@
         document.getElementById('stakeSlider').addEventListener('input', (e) => {
             setStake(parseInt(e.target.value));
         });
+        document.getElementById('stakeSlider').addEventListener('change', (e) => {
+            setStake(parseInt(e.target.value));
+        });
 
         function setAllIn() {
-            setStake(Math.floor(player.balancePennies / 100));
+            setStake(Math.max(1, Math.floor((player.balancePennies || 0) / 100)));
         }
 
         async function submitBet() {
@@ -570,6 +741,11 @@
                     })
                 });
 
+                if (res.status === 401) {
+                    resetToJoin('Session restarted — please rejoin!');
+                    return;
+                }
+
                 if (res.ok) {
                     player.balancePennies -= stakePennies;
                     localStorage.setItem('oh_gnomes_player', JSON.stringify(player));
@@ -577,8 +753,12 @@
                     closeBetSlip();
                     fetchCurrentRace();
                 } else {
-                    const err = await res.json();
-                    alert(err.error || 'Failed to place bet');
+                    let errMsg = 'Failed to place bet';
+                    try {
+                        const err = await res.json();
+                        errMsg = err.error || errMsg;
+                    } catch (_) {}
+                    alert(errMsg);
                 }
             } catch (e) {
                 alert('Network error: ' + e.message);

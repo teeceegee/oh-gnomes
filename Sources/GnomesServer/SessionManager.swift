@@ -112,6 +112,10 @@ public actor SessionManager {
     }
 
     /// Reconnects a player using their saved device credentials
+    public func hasPlayer(_ playerId: String) -> Bool {
+        return players[playerId] != nil
+    }
+
     public func reconnect(request: ReconnectRequest) async -> JoinSuccessPayload? {
         guard let player = players[request.playerId],
               player.deviceCredentialHash == request.deviceCredentialHash else {
