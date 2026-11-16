@@ -335,3 +335,8 @@
 | [EVD-303](https://echopost.atlassian.net/browse/EVD-303) | Task | **To Do** | Medium | EVD-300 | Render Track Obstacle Props, Metal Particle Bursts & Podium Overlay |
 | [EVD-304](https://echopost.atlassian.net/browse/EVD-304) | Task | **To Do** | Medium | EVD-300 | Serve Gnome SVG Portraits to Mobile Cards & Add Place/Each-Way Betting |
 | [EVD-305](https://echopost.atlassian.net/browse/EVD-305) | Task | **To Do** | Medium | EVD-300 | Add Host QoL Controls (Countdown Timer, Mystery Mode Toggle, Reset Session) |
+| [EVD-306](https://echopost.atlassian.net/browse/EVD-306) | Epic | **To Do** | Medium | - | [Oh! Gnomes] Phase 3: 3D Metal/SceneKit Broadcast Engine & Multi-Camera Director |
+| [EVD-307](https://echopost.atlassian.net/browse/EVD-307) | Task | **To Do** | Medium | EVD-306 | 3D Metal-Backed SceneKit/RealityKit Racetrack & Garden Environments |
+| [EVD-308](https://echopost.atlassian.net/browse/EVD-308) | Task | **To Do** | Medium | EVD-306 | 3D Articulated Gnome Runners & Floating 3D Gnome Gems |
+| [EVD-309](https://echopost.atlassian.net/browse/EVD-309) | Task | **To Do** | Medium | EVD-306 | Dynamic Multi-Angle TV Broadcast Camera Director |
+| [EVD-310](https://echopost.atlassian.net/browse/EVD-310) | Task | **To Do** | Medium | EVD-306 | 3D Particle FX & Post-Processing (Mud, Water Mist, Confetti, Depth of Field) |
