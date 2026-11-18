@@ -57,6 +57,10 @@ let package = Package(
             dependencies: ["GnomesCore", "GnomesContracts", "GnomesSimulation"]
         ),
         .target(
+            name: "GnomesPresentation3D",
+            dependencies: ["GnomesCore", "GnomesContracts", "GnomesSimulation"]
+        ),
+        .target(
             name: "GnomesAudio",
             dependencies: ["GnomesCore", "GnomesContracts", "GnomesSimulation"]
         ),
@@ -70,6 +74,7 @@ let package = Package(
                 "GnomesPersistence",
                 "GnomesServer",
                 "GnomesPresentation",
+                "GnomesPresentation3D",
                 "GnomesAudio",
                 .product(name: "FlyingFox", package: "FlyingFox")
             ]
@@ -101,6 +106,10 @@ let package = Package(
         .testTarget(
             name: "GnomesPresentationTests",
             dependencies: ["GnomesPresentation", "GnomesCore", "GnomesContracts", "GnomesSimulation"]
+        ),
+        .testTarget(
+            name: "GnomesPresentation3DTests",
+            dependencies: ["GnomesPresentation3D", "GnomesCore", "GnomesContracts", "GnomesSimulation"]
         ),
         .testTarget(
             name: "GnomesAudioTests",

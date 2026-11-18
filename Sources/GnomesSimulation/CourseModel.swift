@@ -29,6 +29,31 @@ public enum ObstacleType: String, Codable, Sendable {
     case lowHedge         // Jump check; stumble if balance is low
     case moleHill         // Random lateral deflection and stumble risk
     case waterSprinkler   // Temporary disorientation and balance reduction
+    case catapultTrap     // High-arcing garden trowel catapult!
+    case movingSprinkler  // Sweeping jet of cold water across lanes
+    case snailDistraction // Giant prize snail blocks the lane, causing comical swerves
+    case flowerpotDomino  // Knocking over terracotta pots triggers a chain-reaction stumble
+}
+
+public struct CourseWaypoint: Codable, Sendable, Equatable {
+    public let distanceMeter: Double
+    public let x: Double
+    public let yElevation: Double
+    public let zLateral: Double
+
+    public init(distanceMeter: Double, x: Double, yElevation: Double, zLateral: Double) {
+        self.distanceMeter = distanceMeter
+        self.x = x
+        self.yElevation = yElevation
+        self.zLateral = zLateral
+    }
+}
+
+public struct CoursePoint3D: Sendable {
+    public let x: Double
+    public let y: Double
+    public let z: Double
+    public let headingRadians: Double
 }
 
 public struct ObstacleZone: Codable, Sendable, Equatable {
@@ -54,6 +79,7 @@ public struct Course: Codable, Sendable, Identifiable {
     public let totalDistanceMeters: Double
     public let surfaceZones: [SurfaceZone]
     public let obstacleZones: [ObstacleZone]
+    public let waypoints: [CourseWaypoint]?
 
     public init(
         id: String,
@@ -61,7 +87,8 @@ public struct Course: Codable, Sendable, Identifiable {
         description: String,
         totalDistanceMeters: Double,
         surfaceZones: [SurfaceZone],
-        obstacleZones: [ObstacleZone]
+        obstacleZones: [ObstacleZone],
+        waypoints: [CourseWaypoint]? = nil
     ) {
         self.id = id
         self.name = name
@@ -69,6 +96,46 @@ public struct Course: Codable, Sendable, Identifiable {
         self.totalDistanceMeters = totalDistanceMeters
         self.surfaceZones = surfaceZones
         self.obstacleZones = obstacleZones
+        self.waypoints = waypoints
+    }
+
+    /// Computes 3D world position and track tangent heading at a given race distance and lane (1..8)
+    public func position3D(atDistanceMeters dist: Double, lane: Int) -> CoursePoint3D {
+        let clampedDist = max(0.0, min(totalDistanceMeters, dist))
+        let laneOffset = (Double(lane) - 4.5) * 1.1 // 1.1m per lane centered around 0
+
+        if let pts = waypoints, pts.count >= 2 {
+            // Find segment
+            var idx = 0
+            while idx < pts.count - 2 && pts[idx + 1].distanceMeter < clampedDist {
+                idx += 1
+            }
+            let p0 = pts[idx]
+            let p1 = pts[idx + 1]
+            let span = max(0.001, p1.distanceMeter - p0.distanceMeter)
+            let t = max(0.0, min(1.0, (clampedDist - p0.distanceMeter) / span))
+            // Smoothstep interpolation
+            let s = t * t * (3.0 - 2.0 * t)
+            let cx = p0.x + (p1.x - p0.x) * s
+            let cy = p0.yElevation + (p1.yElevation - p0.yElevation) * s
+            let cz = p0.zLateral + (p1.zLateral - p0.zLateral) * s
+
+            let dx = p1.x - p0.x
+            let dz = p1.zLateral - p0.zLateral
+            let heading = atan2(-dz, dx)
+            let nx = -sin(heading)
+            let nz = cos(heading)
+            return CoursePoint3D(x: cx + nx * laneOffset, y: cy, z: cz + nz * laneOffset, headingRadians: heading)
+        }
+
+        // Default gentle undulating garden spline
+        let waveZ = sin(clampedDist * 0.045) * 3.5
+        let waveY = sin(clampedDist * 0.06) * 0.55 + (clampedDist > 100 && clampedDist < 200 ? 0.6 : 0.0)
+        let dz = cos(clampedDist * 0.045) * 3.5 * 0.045
+        let heading = atan2(-dz, 1.0)
+        let nx = -sin(heading)
+        let nz = cos(heading)
+        return CoursePoint3D(x: clampedDist + nx * laneOffset, y: waveY, z: waveZ + nz * laneOffset, headingRadians: heading)
     }
 
     /// Prototype course: Gnome Garden Grand Prix (300 meters)

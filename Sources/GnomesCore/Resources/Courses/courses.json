@@ -2,7 +2,7 @@
   {
     "id": "course_garden_grand_prix",
     "name": "Garden Grand Prix",
-    "description": "The classic backyard garden loop featuring lush manicured lawns, a treacherous flowerbed mud pit, patio stone straightaways, and sprinkler jumps.",
+    "description": "The classic backyard garden loop featuring sweeping S-bends, a flowerbed mud pit, terracotta dominoes, oscillating sprinklers, and a trowel catapult!",
     "totalDistanceMeters": 300.0,
     "surfaceZones": [
       {
@@ -37,38 +37,120 @@
     "obstacleZones": [
       {
         "id": "obs_ggp_spring_1",
-        "locationMeter": 60.0,
-        "triggerRadiusMeters": 3.0,
+        "locationMeter": 45.0,
+        "triggerRadiusMeters": 3.5,
         "obstacleType": "springLauncher",
-        "baseTriggerChance": 0.45
+        "baseTriggerChance": 0.55
       },
       {
-        "id": "obs_ggp_mud_1",
-        "locationMeter": 110.0,
+        "id": "obs_ggp_snail_1",
+        "locationMeter": 85.0,
         "triggerRadiusMeters": 4.0,
-        "obstacleType": "mudPuddle",
-        "baseTriggerChance": 0.6
-      },
-      {
-        "id": "obs_ggp_sprinkler_1",
-        "locationMeter": 200.0,
-        "triggerRadiusMeters": 5.0,
-        "obstacleType": "waterSprinkler",
+        "obstacleType": "snailDistraction",
         "baseTriggerChance": 0.5
       },
       {
-        "id": "obs_ggp_molehill_1",
-        "locationMeter": 260.0,
+        "id": "obs_ggp_mud_1",
+        "locationMeter": 120.0,
+        "triggerRadiusMeters": 4.5,
+        "obstacleType": "mudPuddle",
+        "baseTriggerChance": 0.65
+      },
+      {
+        "id": "obs_ggp_pots_1",
+        "locationMeter": 175.0,
+        "triggerRadiusMeters": 4.0,
+        "obstacleType": "flowerpotDomino",
+        "baseTriggerChance": 0.55
+      },
+      {
+        "id": "obs_ggp_sprinkler_1",
+        "locationMeter": 215.0,
+        "triggerRadiusMeters": 5.0,
+        "obstacleType": "movingSprinkler",
+        "baseTriggerChance": 0.55
+      },
+      {
+        "id": "obs_ggp_hedge_1",
+        "locationMeter": 255.0,
         "triggerRadiusMeters": 3.5,
-        "obstacleType": "moleHill",
-        "baseTriggerChance": 0.4
+        "obstacleType": "lowHedge",
+        "baseTriggerChance": 0.55
+      }
+    ],
+    "waypoints": [
+      {
+        "distanceMeter": 0.0,
+        "x": 0.0,
+        "yElevation": 0.0,
+        "zLateral": 0.0
+      },
+      {
+        "distanceMeter": 30.0,
+        "x": 30.0,
+        "yElevation": 0.97,
+        "zLateral": 3.53
+      },
+      {
+        "distanceMeter": 60.0,
+        "x": 60.0,
+        "yElevation": 1.14,
+        "zLateral": 5.71
+      },
+      {
+        "distanceMeter": 90.0,
+        "x": 90.0,
+        "yElevation": 0.37,
+        "zLateral": 5.71
+      },
+      {
+        "distanceMeter": 120.0,
+        "x": 120.0,
+        "yElevation": 0.0,
+        "zLateral": 3.53
+      },
+      {
+        "distanceMeter": 150.0,
+        "x": 150.0,
+        "yElevation": 0.0,
+        "zLateral": 0.0
+      },
+      {
+        "distanceMeter": 180.0,
+        "x": 180.0,
+        "yElevation": 0.0,
+        "zLateral": -3.53
+      },
+      {
+        "distanceMeter": 210.0,
+        "x": 210.0,
+        "yElevation": 0.37,
+        "zLateral": -5.71
+      },
+      {
+        "distanceMeter": 240.0,
+        "x": 240.0,
+        "yElevation": 1.14,
+        "zLateral": -5.71
+      },
+      {
+        "distanceMeter": 270.0,
+        "x": 270.0,
+        "yElevation": 0.97,
+        "zLateral": -3.53
+      },
+      {
+        "distanceMeter": 300.0,
+        "x": 300.0,
+        "yElevation": 0.0,
+        "zLateral": -0.0
       }
     ]
   },
   {
     "id": "course_allotment_derby",
     "name": "Allotment Derby",
-    "description": "A grueling stamina-sapping endurance run through overgrown compost mulch beds, leaking irrigation hoses, greenhouse pavers, and wheelbarrow ramps.",
+    "description": "A grueling endurance run winding through compost mulch trenches, prize snail crossings, leaky irrigation sprinklers, and wheelbarrow catapults.",
     "totalDistanceMeters": 350.0,
     "surfaceZones": [
       {
@@ -111,44 +193,119 @@
       {
         "id": "obs_ad_hedge_1",
         "locationMeter": 50.0,
-        "triggerRadiusMeters": 3.0,
+        "triggerRadiusMeters": 3.5,
         "obstacleType": "lowHedge",
-        "baseTriggerChance": 0.5
+        "baseTriggerChance": 0.55
       },
       {
         "id": "obs_ad_mud_1",
-        "locationMeter": 120.0,
-        "triggerRadiusMeters": 4.0,
+        "locationMeter": 110.0,
+        "triggerRadiusMeters": 4.5,
         "obstacleType": "mudPuddle",
         "baseTriggerChance": 0.65
       },
       {
-        "id": "obs_ad_molehill_1",
-        "locationMeter": 160.0,
-        "triggerRadiusMeters": 3.0,
-        "obstacleType": "moleHill",
-        "baseTriggerChance": 0.45
+        "id": "obs_ad_snail_1",
+        "locationMeter": 155.0,
+        "triggerRadiusMeters": 4.0,
+        "obstacleType": "snailDistraction",
+        "baseTriggerChance": 0.5
       },
       {
         "id": "obs_ad_sprinkler_1",
-        "locationMeter": 220.0,
+        "locationMeter": 215.0,
         "triggerRadiusMeters": 6.0,
-        "obstacleType": "waterSprinkler",
+        "obstacleType": "movingSprinkler",
+        "baseTriggerChance": 0.6
+      },
+      {
+        "id": "obs_ad_catapult_1",
+        "locationMeter": 275.0,
+        "triggerRadiusMeters": 3.5,
+        "obstacleType": "catapultTrap",
         "baseTriggerChance": 0.55
       },
       {
-        "id": "obs_ad_spring_1",
-        "locationMeter": 290.0,
+        "id": "obs_ad_pots_1",
+        "locationMeter": 315.0,
         "triggerRadiusMeters": 3.5,
-        "obstacleType": "springLauncher",
-        "baseTriggerChance": 0.4
+        "obstacleType": "flowerpotDomino",
+        "baseTriggerChance": 0.45
+      }
+    ],
+    "waypoints": [
+      {
+        "distanceMeter": 0.0,
+        "x": 0.0,
+        "yElevation": 0.0,
+        "zLateral": 0.0
+      },
+      {
+        "distanceMeter": 35.0,
+        "x": 35.0,
+        "yElevation": 1.46,
+        "zLateral": 7.28
+      },
+      {
+        "distanceMeter": 70.0,
+        "x": 70.0,
+        "yElevation": 1.71,
+        "zLateral": 8.56
+      },
+      {
+        "distanceMeter": 105.0,
+        "x": 105.0,
+        "yElevation": 0.56,
+        "zLateral": 2.78
+      },
+      {
+        "distanceMeter": 140.0,
+        "x": 140.0,
+        "yElevation": 0.0,
+        "zLateral": -5.29
+      },
+      {
+        "distanceMeter": 175.0,
+        "x": 175.0,
+        "yElevation": 0.0,
+        "zLateral": -9.0
+      },
+      {
+        "distanceMeter": 210.0,
+        "x": 210.0,
+        "yElevation": 0.0,
+        "zLateral": -5.29
+      },
+      {
+        "distanceMeter": 245.0,
+        "x": 245.0,
+        "yElevation": 0.56,
+        "zLateral": 2.78
+      },
+      {
+        "distanceMeter": 280.0,
+        "x": 280.0,
+        "yElevation": 1.71,
+        "zLateral": 8.56
+      },
+      {
+        "distanceMeter": 315.0,
+        "x": 315.0,
+        "yElevation": 1.46,
+        "zLateral": 7.28
+      },
+      {
+        "distanceMeter": 350.0,
+        "x": 350.0,
+        "yElevation": 0.0,
+        "zLateral": 0.0
       }
     ]
   },
   {
     "id": "course_rockery_rally",
     "name": "Rockery Rally",
-    "description": "A high-speed technical descent down steep slate rock gardens with mossy edges, tight hairpin gravel corners, and double spring launcher kickers.",
+    "description": "A high-speed steep slate rockery descent with hairpin gravel bends, double catapult kickers, molehills, and shattered terracotta hazards.",
     "totalDistanceMeters": 250.0,
     "surfaceZones": [
       {
@@ -182,32 +339,107 @@
     ],
     "obstacleZones": [
       {
-        "id": "obs_rr_spring_1",
+        "id": "obs_rr_catapult_1",
         "locationMeter": 40.0,
-        "triggerRadiusMeters": 3.0,
-        "obstacleType": "springLauncher",
-        "baseTriggerChance": 0.45
+        "triggerRadiusMeters": 3.5,
+        "obstacleType": "catapultTrap",
+        "baseTriggerChance": 0.55
       },
       {
         "id": "obs_rr_hedge_1",
         "locationMeter": 95.0,
         "triggerRadiusMeters": 3.5,
         "obstacleType": "lowHedge",
-        "baseTriggerChance": 0.5
+        "baseTriggerChance": 0.55
       },
       {
         "id": "obs_rr_spring_2",
-        "locationMeter": 150.0,
-        "triggerRadiusMeters": 3.0,
+        "locationMeter": 145.0,
+        "triggerRadiusMeters": 3.5,
         "obstacleType": "springLauncher",
+        "baseTriggerChance": 0.55
+      },
+      {
+        "id": "obs_rr_pots_1",
+        "locationMeter": 180.0,
+        "triggerRadiusMeters": 3.5,
+        "obstacleType": "flowerpotDomino",
         "baseTriggerChance": 0.5
       },
       {
         "id": "obs_rr_molehill_1",
-        "locationMeter": 185.0,
+        "locationMeter": 215.0,
         "triggerRadiusMeters": 3.0,
         "obstacleType": "moleHill",
         "baseTriggerChance": 0.45
+      }
+    ],
+    "waypoints": [
+      {
+        "distanceMeter": 0.0,
+        "x": 0.0,
+        "yElevation": 0.0,
+        "zLateral": 0.0
+      },
+      {
+        "distanceMeter": 25.0,
+        "x": 25.0,
+        "yElevation": 2.1,
+        "zLateral": 7.78
+      },
+      {
+        "distanceMeter": 50.0,
+        "x": 50.0,
+        "yElevation": 2.47,
+        "zLateral": 11.0
+      },
+      {
+        "distanceMeter": 75.0,
+        "x": 75.0,
+        "yElevation": 0.8,
+        "zLateral": 7.78
+      },
+      {
+        "distanceMeter": 100.0,
+        "x": 100.0,
+        "yElevation": 0.0,
+        "zLateral": 0.0
+      },
+      {
+        "distanceMeter": 125.0,
+        "x": 125.0,
+        "yElevation": 0.0,
+        "zLateral": -7.78
+      },
+      {
+        "distanceMeter": 150.0,
+        "x": 150.0,
+        "yElevation": 0.0,
+        "zLateral": -11.0
+      },
+      {
+        "distanceMeter": 175.0,
+        "x": 175.0,
+        "yElevation": 0.8,
+        "zLateral": -7.78
+      },
+      {
+        "distanceMeter": 200.0,
+        "x": 200.0,
+        "yElevation": 2.47,
+        "zLateral": -0.0
+      },
+      {
+        "distanceMeter": 225.0,
+        "x": 225.0,
+        "yElevation": 2.1,
+        "zLateral": 7.78
+      },
+      {
+        "distanceMeter": 250.0,
+        "x": 250.0,
+        "yElevation": 0.0,
+        "zLateral": 11.0
       }
     ]
   }

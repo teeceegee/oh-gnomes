@@ -8,6 +8,11 @@ public enum IncidentType: String, Codable, Sendable {
     case sprinklerDaze
     case sprintSurge
     case gnomeCollision
+    case gnomePileup
+    case hedgeShortcut
+    case snailDistraction
+    case hatSteal
+    case mudSlideBowling
 }
 
 public struct IncidentRecord: Codable, Sendable {

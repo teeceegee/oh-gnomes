@@ -5,18 +5,15 @@
       <stop offset="100%" stop-color="#1a252f"/>
     </radialGradient>
   </defs>
-  <rect width="120" height="120" rx="24" fill="url(#bg)" stroke="#4a69bd" stroke-width="2"/>
-  <!-- Gnome Body -->
-  <circle cx="60" cy="75" r="28" fill="#34495e"/>
-  <!-- Gnome Beard -->
-  <path d="M 42 65 Q 60 102 78 65 Q 60 72 42 65 Z" fill="#a4b0be"/>
-  <!-- Gnome Nose -->
-  <ellipse cx="60" cy="63" rx="7" ry="5" fill="#ffb8b8"/>
-  <!-- Gnome Hat -->
-  <polygon points="36,60 60,18 84,60" fill="#9b59b6" stroke="#ffffff" stroke-width="1.5"/>
-  <!-- Gnome Hat Brim -->
-  <ellipse cx="60" cy="60" rx="26" ry="5" fill="#9b59b6" stroke="#ffffff" stroke-width="1"/>
-  <!-- Initial badge -->
-  <circle cx="60" cy="102" r="10" fill="#222f3e" stroke="#f1c40f" stroke-width="1"/>
-  <text x="60" y="106" font-family="Helvetica, Arial, sans-serif" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle">BB</text>
+  <rect width="120" height="120" rx="24" fill="url(#bg)" stroke="#e74c3c" stroke-width="2"/>
+  <circle cx="60" cy="78" r="27" fill="#60a3bc"/>
+  <circle cx="60" cy="58" r="16" fill="#fbd3b6"/>
+  <path d="M 44 64 Q 60 84 76 64 Z" fill="#d1ccc0"/><path d="M 34 62 Q 48 68 60 63 Q 72 68 86 62" stroke="#d1ccc0" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="53" cy="56" r="2" fill="#2c3e50"/>
+  <circle cx="67" cy="56" r="2" fill="#2c3e50"/>
+  <ellipse cx="60" cy="61" rx="5" ry="4" fill="#f5a99c"/>
+  <path d="M 34 56 Q 55 30 68 10 Q 65 35 86 56 Z" fill="#e74c3c" stroke="#fff" stroke-width="1.5"/><ellipse cx="60" cy="56" rx="30" ry="5" fill="#e74c3c" stroke="#fff" stroke-width="1"/>
+  <circle cx="68" cy="58" r="6" fill="rgba(135,206,250,0.35)" stroke="#f1c40f" stroke-width="1.8"/><line x1="74" y1="60" x2="78" y2="78" stroke="#f1c40f" stroke-width="1"/>
+  <circle cx="60" cy="104" r="9" fill="#1e272e" stroke="#f1c40f" stroke-width="1"/>
+  <text x="60" y="107" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#ffffff" text-anchor="middle">BB</text>
 </svg>

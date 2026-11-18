@@ -255,12 +255,79 @@ public final class SimulationEngine: @unchecked Sendable {
             runners[runnerIndex].velocityMps *= 0.4
             triggerStumble(runnerIndex: runnerIndex, reason: "splattered into a deep mud puddle")
 
-        case .waterSprinkler:
+        case .waterSprinkler, .movingSprinkler:
             runners[runnerIndex].balance = max(0.1, runners[runnerIndex].balance - 0.5)
-            recordEvent(type: .obstacleTriggered, payload: "{\"gnomeId\":\"\(runners[runnerIndex].gnomeId)\",\"obstacle\":\"waterSprinkler\"}")
+            runners[runnerIndex].velocityMps *= 0.75
+            let incident = IncidentRecord(
+                tick: currentTick,
+                runnerId: runners[runnerIndex].gnomeId,
+                runnerName: runners[runnerIndex].gnomeName,
+                incidentType: .sprinklerDaze,
+                description: "got blasted sideways by an oscillating garden sprinkler!",
+                distanceMeter: runners[runnerIndex].distanceMeters
+            )
+            incidents.append(incident)
+            recordEvent(type: .obstacleTriggered, payload: "{\"gnomeId\":\"\(runners[runnerIndex].gnomeId)\",\"obstacle\":\"\(obstacle.obstacleType.rawValue)\"}")
 
-        default:
-            triggerStumble(runnerIndex: runnerIndex, reason: "tripped over obstacle \(obstacle.id)")
+        case .catapultTrap:
+            runners[runnerIndex].statusEffect = .airborneLaunch
+            runners[runnerIndex].recoveryTimerTicks = 42
+            let incident = IncidentRecord(
+                tick: currentTick,
+                runnerId: runners[runnerIndex].gnomeId,
+                runnerName: runners[runnerIndex].gnomeName,
+                incidentType: .airborneLaunch,
+                description: "stepped on a concealed trowel catapult and achieved low Earth orbit!",
+                distanceMeter: runners[runnerIndex].distanceMeters
+            )
+            incidents.append(incident)
+            recordEvent(type: .obstacleTriggered, payload: "{\"gnomeId\":\"\(runners[runnerIndex].gnomeId)\",\"obstacle\":\"catapultTrap\"}")
+
+        case .snailDistraction:
+            runners[runnerIndex].velocityMps *= 0.55
+            let incident = IncidentRecord(
+                tick: currentTick,
+                runnerId: runners[runnerIndex].gnomeId,
+                runnerName: runners[runnerIndex].gnomeName,
+                incidentType: .snailDistraction,
+                description: "stopped to politely negotiate right-of-way with a giant prize snail!",
+                distanceMeter: runners[runnerIndex].distanceMeters
+            )
+            incidents.append(incident)
+            recordEvent(type: .obstacleTriggered, payload: "{\"gnomeId\":\"\(runners[runnerIndex].gnomeId)\",\"obstacle\":\"snailDistraction\"}")
+
+        case .flowerpotDomino:
+            runners[runnerIndex].velocityMps *= 0.6
+            let incident = IncidentRecord(
+                tick: currentTick,
+                runnerId: runners[runnerIndex].gnomeId,
+                runnerName: runners[runnerIndex].gnomeName,
+                incidentType: .gnomePileup,
+                description: "knocked over a row of terracotta flowerpots in spectacular domino chaos!",
+                distanceMeter: runners[runnerIndex].distanceMeters
+            )
+            incidents.append(incident)
+            triggerStumble(runnerIndex: runnerIndex, reason: "tangled in shattered terracotta flowerpots")
+
+        case .lowHedge:
+            if gnomes[runnerIndex].baselineAttributes.balance > 0.72 {
+                // Nimble gnomes dive through a hedge shortcut!
+                runners[runnerIndex].velocityMps *= 1.25
+                let incident = IncidentRecord(
+                    tick: currentTick,
+                    runnerId: runners[runnerIndex].gnomeId,
+                    runnerName: runners[runnerIndex].gnomeName,
+                    incidentType: .hedgeShortcut,
+                    description: "dived straight through a privet hedge shortcut!",
+                    distanceMeter: runners[runnerIndex].distanceMeters
+                )
+                incidents.append(incident)
+            } else {
+                triggerStumble(runnerIndex: runnerIndex, reason: "got wedged upside down in the privet hedge")
+            }
+
+        case .moleHill:
+            triggerStumble(runnerIndex: runnerIndex, reason: "stepped into a fresh molehill excavation")
         }
     }
 

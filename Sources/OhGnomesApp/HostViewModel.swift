@@ -1,13 +1,12 @@
 import Foundation
 import SwiftUI
-import SpriteKit
 import GnomesCore
 import GnomesContracts
 import GnomesSimulation
 import GnomesEconomy
 import GnomesPersistence
 import GnomesServer
-import GnomesPresentation
+import GnomesPresentation3D
 import GnomesAudio
 
 @MainActor
@@ -20,7 +19,8 @@ public final class HostViewModel: ObservableObject {
     @Published public var subtitleText: String = "Welcome to Oh! Gnomes — Connect on your mobile to join!"
     @Published public var currentRaceIndex: Int = 1
     @Published public var isRunningRace: Bool = false
-    @Published public var broadcastScene: RaceBroadcastScene
+    @Published public var broadcastScene: RaceBroadcast3DScene
+    @Published public var selectedCameraAngle: BroadcastCameraAngle = .auto
     @Published public var bettingSecondsRemaining: Int? = nil
     @Published public var isMysteryMode: Bool = true
     @Published public var lastRacePodium: [RunnerState] = []
@@ -84,7 +84,7 @@ public final class HostViewModel: ObservableObject {
         let raceEntrants = Array(loadedGnomes.prefix(8))
 
         // 2. Setup presentation & audio engines
-        self.broadcastScene = RaceBroadcastScene(course: activeCourse, gnomes: raceEntrants)
+        self.broadcastScene = RaceBroadcast3DScene(course: activeCourse, gnomes: raceEntrants)
         self.commentaryEngine = CommentaryEngine()
         self.commentaryGenerator = ProceduralCommentaryGenerator()
         self.audioFX = AudioFXSynthesizer()
@@ -106,9 +106,13 @@ public final class HostViewModel: ObservableObject {
         self.commentaryEngine.onSubtitleEmitted = { [weak self] subtitle in
             Task { @MainActor in
                 self?.subtitleText = subtitle
-                self?.broadcastScene.setSubtitleText(subtitle)
             }
         }
+    }
+
+    public func setCameraAngle(_ angle: BroadcastCameraAngle) {
+        self.selectedCameraAngle = angle
+        self.broadcastScene.setCameraAngle(angle)
     }
 
     private var hasStarted = false
@@ -145,7 +149,8 @@ public final class HostViewModel: ObservableObject {
     private func syncSceneToCurrentRace(race: Race) async {
         let entrants = await sessionManager.currentEntrants
         let course = courses.first(where: { $0.id == race.courseId }) ?? courses[0]
-        self.broadcastScene = RaceBroadcastScene(course: course, gnomes: entrants)
+        self.broadcastScene = RaceBroadcast3DScene(course: course, gnomes: entrants)
+        self.broadcastScene.setCameraAngle(selectedCameraAngle)
     }
 
     private func notifyClientsPhaseChanged() async {
@@ -285,13 +290,10 @@ public final class HostViewModel: ObservableObject {
         let course = courses.first(where: { $0.id == race.courseId }) ?? courses[0]
         let seed = UInt64.random(in: 1...1_000_000)
         let entrants = await sessionManager.currentEntrants
-        let trackBounds = CGRect(x: 0, y: 0, width: course.totalDistanceMeters * 25.0, height: 1080)
 
         self.audioFX.playEffect(.startingGun)
         let startSpeech = commentaryGenerator.commentaryForStart(courseName: course.name, entrantsCount: entrants.count, seed: Int(seed))
-        self.commentaryEngine.speak(startSpeech)
-
-        broadcastScene.cameraDirector.setMode(.packLead, trackBounds: trackBounds)
+        self.commentaryEngine.speak(startSpeech, drama: .excited)
 
         let engine = SimulationEngine(
             raceId: race.id,
@@ -300,7 +302,7 @@ public final class HostViewModel: ObservableObject {
             gnomes: entrants
         )
 
-        let dt: CGFloat = 1.0 / 30.0
+        let dt: Double = 1.0 / 30.0
         var lastLeaderId: String? = nil
         var lastCommentaryTick = -90
         var lastIncidentCount = 0
@@ -322,12 +324,13 @@ public final class HostViewModel: ObservableObject {
                 announcedRanks.insert(rank)
                 if rank == 1 {
                     audioFX.playEffect(.trumpetFanfare)
+                    broadcastScene.triggerFinishConfetti()
                     let winLine = commentaryGenerator.commentaryForWinner(winnerName: finisher.gnomeName, seed: Int(seed))
-                    commentaryEngine.speak(winLine, interrupt: true)
+                    commentaryEngine.speak(winLine, drama: .triumph, interrupt: true)
                 } else if rank == 2 {
-                    commentaryEngine.speak("Second place goes to \(finisher.gnomeName)!", interrupt: false)
+                    commentaryEngine.speak("Second place goes to \(finisher.gnomeName)!", drama: .excited, interrupt: false)
                 } else if rank == 3 {
-                    commentaryEngine.speak("And \(finisher.gnomeName) claims third place on the podium!", interrupt: false)
+                    commentaryEngine.speak("And \(finisher.gnomeName) claims third place on the podium!", drama: .normal, interrupt: false)
                 }
             }
 
@@ -345,11 +348,11 @@ public final class HostViewModel: ObservableObject {
                         reason: newIncident.description,
                         seed: engine.currentTick
                     )
-                    commentaryEngine.speak(line, interrupt: false)
+                    commentaryEngine.speak(line, drama: .chaotic, interrupt: false)
                 }
             }
 
-            // Dynamic camera director & overtake commentary
+            // Dynamic overtake commentary
             if let leader = updatedRunners.max(by: { $0.distanceMeters < $1.distanceMeters }) {
                 if !announcedRanks.contains(1),
                    let prevId = lastLeaderId, prevId != leader.gnomeId,
@@ -357,13 +360,9 @@ public final class HostViewModel: ObservableObject {
                     lastCommentaryTick = engine.currentTick
                     let prevName = entrants.first(where: { $0.id == prevId })?.name ?? "the leader"
                     let overtakeLine = commentaryGenerator.commentaryForOvertake(leaderName: leader.gnomeName, chaserName: prevName, seed: engine.currentTick)
-                    commentaryEngine.speak(overtakeLine, interrupt: false)
+                    commentaryEngine.speak(overtakeLine, drama: .excited, interrupt: false)
                 }
                 lastLeaderId = leader.gnomeId
-
-                if leader.distanceMeters >= course.totalDistanceMeters - 25.0 {
-                    broadcastScene.cameraDirector.setMode(.finishLine, trackBounds: trackBounds)
-                }
             }
 
             try? await Task.sleep(nanoseconds: 33_333_333) // ~30 FPS physics delay

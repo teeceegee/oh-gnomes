@@ -1,7 +1,6 @@
 import SwiftUI
-import SpriteKit
 import CoreImage.CIFilterBuiltins
-import GnomesPresentation
+import GnomesPresentation3D
 
 public struct HostBroadcastView: View {
     @ObservedObject var viewModel: HostViewModel
@@ -13,14 +12,10 @@ public struct HostBroadcastView: View {
 
     public var body: some View {
         ZStack {
-            // 1. SpriteKit 1080p Metal Racetrack Scene
-            SpriteView(
-                scene: viewModel.broadcastScene,
-                preferredFramesPerSecond: 60,
-                options: [.ignoresSiblingOrder]
-            )
-            .id(ObjectIdentifier(viewModel.broadcastScene))
-            .edgesIgnoringSafeArea(.all)
+            // 1. Metal-Backed 3D SceneKit Garden Racetrack Broadcast
+            RaceBroadcast3DView(sceneController: viewModel.broadcastScene)
+                .id(ObjectIdentifier(viewModel.broadcastScene))
+                .edgesIgnoringSafeArea(.all)
 
             // 2. HUD Overlays
             VStack {
@@ -240,6 +235,29 @@ public struct HostBroadcastView: View {
                 }
 
                 Spacer()
+
+                // Multi-Camera Angle Switcher Bar
+                HStack(spacing: 8) {
+                    Text("📷 CAM:")
+                        .font(.system(size: 11, weight: .black))
+                        .foregroundColor(.white.opacity(0.8))
+                    ForEach(BroadcastCameraAngle.allCases, id: \.self) { angle in
+                        Button(action: { viewModel.setCameraAngle(angle) }) {
+                            Text(angle.rawValue)
+                                .font(.system(size: 11, weight: .bold))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(viewModel.selectedCameraAngle == angle ? Color.blue : Color.black.opacity(0.7))
+                                .foregroundColor(.white)
+                                .cornerRadius(6)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.black.opacity(0.55))
+                .cornerRadius(10)
 
                 // Live Synchronized Commentary Subtitle
                 HStack {

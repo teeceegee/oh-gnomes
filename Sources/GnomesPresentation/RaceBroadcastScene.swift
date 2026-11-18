@@ -119,7 +119,7 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
             label.position = CGPoint(x: 0, y: (trackHeight / 2.0) - 20)
 
             switch obs.obstacleType {
-            case .springLauncher:
+            case .springLauncher, .catapultTrap:
                 propNode.fillColor = ColorType(red: 0.95, green: 0.75, blue: 0.10, alpha: 0.35)
                 propNode.strokeColor = ColorType(red: 0.95, green: 0.85, blue: 0.20, alpha: 0.8)
                 label.text = "🚀"
@@ -127,7 +127,7 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
                 propNode.fillColor = ColorType(red: 0.32, green: 0.18, blue: 0.08, alpha: 0.65)
                 propNode.strokeColor = .clear
                 label.text = "💩"
-            case .waterSprinkler:
+            case .waterSprinkler, .movingSprinkler:
                 propNode.fillColor = ColorType(red: 0.20, green: 0.65, blue: 0.95, alpha: 0.35)
                 propNode.strokeColor = ColorType(red: 0.40, green: 0.80, blue: 1.0, alpha: 0.8)
                 label.text = "💦"
@@ -139,6 +139,14 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
                 propNode.fillColor = ColorType(red: 0.45, green: 0.30, blue: 0.18, alpha: 0.75)
                 propNode.strokeColor = .clear
                 label.text = "⛰️"
+            case .snailDistraction:
+                propNode.fillColor = ColorType(red: 0.55, green: 0.45, blue: 0.25, alpha: 0.55)
+                propNode.strokeColor = .clear
+                label.text = "🐌"
+            case .flowerpotDomino:
+                propNode.fillColor = ColorType(red: 0.75, green: 0.35, blue: 0.20, alpha: 0.65)
+                propNode.strokeColor = .clear
+                label.text = "🪴"
             }
             propNode.addChild(label)
             addChild(propNode)
@@ -201,9 +209,9 @@ public final class RaceBroadcastScene: SKScene, @unchecked Sendable {
         guard let runner = runnerNodes.first(where: { $0.gnomeId == gnomeId }) else { return }
         let emitter: SKEmitterNode
         switch type {
-        case .mudSplash, .stumble:
+        case .mudSplash, .mudSlideBowling, .stumble, .gnomePileup:
             emitter = MetalParticleShaders.makeMudSplashEmitter()
-        case .airborneLaunch, .sprintSurge, .sprinklerDaze, .gnomeCollision:
+        case .airborneLaunch, .sprintSurge, .sprinklerDaze, .gnomeCollision, .hedgeShortcut, .snailDistraction, .hatSteal:
             emitter = MetalParticleShaders.makeSpringDustEmitter()
         }
         emitter.position = runner.position

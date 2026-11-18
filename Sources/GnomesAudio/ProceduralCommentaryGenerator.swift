@@ -32,14 +32,20 @@ public struct ProceduralCommentaryGenerator: Sendable {
             phrases = corpus.stumbles
         case .airborneLaunch:
             phrases = corpus.springLaunchers
-        case .mudSplash:
+        case .mudSplash, .mudSlideBowling:
             phrases = corpus.mudSplashes
         case .sprinklerDaze:
             phrases = corpus.sprinklers
         case .sprintSurge:
-            return "Look at \(runnerName) fly! A late burst of speed down the final stretch!"
-        case .gnomeCollision:
+            return "Look at \(runnerName) fly! A ferocious late burst of ceramic speed!"
+        case .gnomeCollision, .gnomePileup:
             phrases = corpus.collisions
+        case .hedgeShortcut:
+            return "Cheeky brilliance! \(runnerName) dives straight through the privet hedge shortcut!"
+        case .snailDistraction:
+            return "Hold everything! \(runnerName) has stopped to negotiate right-of-way with a giant prize snail!"
+        case .hatSteal:
+            return "Scandalous scenes! \(runnerName)'s pointy hat has been swiped mid-stride!"
         }
 
         if !phrases.isEmpty {
@@ -81,14 +87,20 @@ public struct ProceduralCommentaryGenerator: Sendable {
             return "Disaster for \(runnerName)! A terrible stumble on the course!"
         case .airborneLaunch:
             return "Good heavens! \(runnerName) hit a spring launcher and is soaring through the air!"
-        case .mudSplash:
+        case .mudSplash, .mudSlideBowling:
             return "\(runnerName) takes a face full of mud and gets completely bogged down!"
         case .sprinklerDaze:
             return "A sprinkler catches \(runnerName) cold! Water everywhere!"
         case .sprintSurge:
             return "Look at \(runnerName) fly! A late burst of speed down the final stretch!"
-        case .gnomeCollision:
-            return "Heavy contact! \(runnerName) bounces off a rival runner!"
+        case .gnomeCollision, .gnomePileup:
+            return "Heavy contact! \(runnerName) bounces off a rival runner in a ceramic pileup!"
+        case .hedgeShortcut:
+            return "Cheeky move! \(runnerName) dives straight through the privet hedge shortcut!"
+        case .snailDistraction:
+            return "Hold everything! \(runnerName) is distracted by a giant prize snail!"
+        case .hatSteal:
+            return "Scandalous! \(runnerName) loses their pointy hat in mid-stride!"
         }
     }
 }
