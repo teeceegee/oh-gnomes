@@ -72,29 +72,37 @@ public enum GardenCourse3DBuilder {
 
             // Picket fence posts every 5m on both sides
             if Int(dist) % 5 == 0 {
+                let nx = sin(mid.headingRadians)
+                let nz = cos(mid.headingRadians)
                 for side in [-1.0, 1.0] {
                     let postGeo = SCNBox(width: 0.18, height: 0.95, length: 0.18, chamferRadius: 0.02)
                     postGeo.firstMaterial?.diffuse.contents = NSColor(white: 0.94, alpha: 1.0)
                     let post = SCNNode(geometry: postGeo)
                     let offset = side * (Double(trackWidth) * 0.5 + 0.35)
-                    let nx = -sin(mid.headingRadians)
-                    let nz = cos(mid.headingRadians)
                     post.position = SCNVector3(mid.x + nx * offset, mid.y + 0.45, mid.z + nz * offset)
                     post.castsShadow = true
                     root.addChildNode(post)
                 }
             }
 
-            // Flanking 3D garden trees/bushes every 15m
+            // Lush tall trees on the far backdrop side (-1) only, keeping foreground camera corridor (+1) 100% clear
             if Int(dist) % 15 == 0 {
-                for side in [-1.0, 1.0] {
-                    let nx = -sin(mid.headingRadians)
-                    let nz = cos(mid.headingRadians)
-                    let treeOffset = side * (Double(trackWidth) * 0.5 + 4.5 + Double(Int(dist) % 3))
-                    let tree = buildGardenTree(scale: side > 0 ? 1.15 : 0.9)
-                    tree.position = SCNVector3(mid.x + nx * treeOffset, mid.y, mid.z + nz * treeOffset)
-                    root.addChildNode(tree)
-                }
+                let nx = sin(mid.headingRadians)
+                let nz = cos(mid.headingRadians)
+
+                let backOffset = -(Double(trackWidth) * 0.5 + 5.5 + Double(Int(dist) % 4))
+                let backTree = buildGardenTree(scale: (Int(dist) % 30 == 0) ? 1.25 : 0.95)
+                backTree.position = SCNVector3(mid.x + nx * backOffset, mid.y, mid.z + nz * backOffset)
+                root.addChildNode(backTree)
+
+                // Low flower bush on foreground side (well below camera sightline)
+                let frontOffset = Double(trackWidth) * 0.5 + 2.2
+                let bush = SCNSphere(radius: 0.45)
+                bush.firstMaterial?.diffuse.contents = (Int(dist) % 30 == 0) ? NSColor.systemPink : NSColor.systemYellow
+                let bushNode = SCNNode(geometry: bush)
+                bushNode.scale = SCNVector3(1.2, 0.55, 1.2)
+                bushNode.position = SCNVector3(mid.x + nx * frontOffset, mid.y + 0.2, mid.z + nz * frontOffset)
+                root.addChildNode(bushNode)
             }
 
             _ = (p0, p1)

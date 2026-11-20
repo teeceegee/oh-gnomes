@@ -96,8 +96,9 @@ public final class BroadcastCameraDirector3D {
 
         let forwardX = cos(trackPt.headingRadians)
         let forwardZ = -sin(trackPt.headingRadians)
-        let rightX = -sin(trackPt.headingRadians)
-        let rightZ = -cos(trackPt.headingRadians)
+        // Exact perpendicular toward the clear foreground camera corridor (+Z when heading == 0)
+        let rightX = sin(trackPt.headingRadians)
+        let rightZ = cos(trackPt.headingRadians)
 
         var desiredPos: SCNVector3
         var desiredLookAt = SCNVector3(trackPt.x, trackPt.y + 0.9, trackPt.z)
@@ -140,8 +141,8 @@ public final class BroadcastCameraDirector3D {
 
             case .finishPhotoCam:
                 let finPt = course.position3D(atDistanceMeters: course.totalDistanceMeters, lane: 4)
-                let finRightX = -sin(finPt.headingRadians)
-                let finRightZ = -cos(finPt.headingRadians)
+                let finRightX = sin(finPt.headingRadians)
+                let finRightZ = cos(finPt.headingRadians)
                 desiredPos = SCNVector3(
                     finPt.x + finRightX * 11.5,
                     finPt.y + 3.0,
