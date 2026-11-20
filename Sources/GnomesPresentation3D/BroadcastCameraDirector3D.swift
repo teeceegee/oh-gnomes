@@ -13,27 +13,41 @@ public enum BroadcastCameraAngle: String, CaseIterable, Sendable {
 
 @MainActor
 public final class BroadcastCameraDirector3D {
+    public static let autoShotDurationSeconds: Double = 11.0
+    public static let incidentCutawayDurationSeconds: Double = 2.2
+    public static let incidentCooldownSeconds: Double = 14.0
+
     public var selectedMode: BroadcastCameraAngle = .auto
     public private(set) var activeAutoAngle: BroadcastCameraAngle = .startGateCrane
 
+    private let autoCycle: [BroadcastCameraAngle] = [.droneChase, .tracksideDolly, .overheadTactical]
+    private var autoCycleIndex: Int = 0
     private var autoSwitchElapsed: Double = 0.0
     private var incidentCutawayRemaining: Double = 0.0
+    private var incidentCooldownRemaining: Double = 6.0
     private var incidentTargetDistance: Double = 0.0
     private var incidentTargetLane: Int = 4
     private var smoothedLookAt = SCNVector3(0, 1.0, 0)
 
     public init() {}
 
-    public func triggerIncidentCutaway(distanceMeters: Double, lane: Int) {
+    public func triggerIncidentCutaway(distanceMeters: Double, lane: Int, totalDistanceMeters: Double = 300.0) {
         guard selectedMode == .auto else { return }
-        incidentCutawayRemaining = 2.0
+        guard incidentCutawayRemaining <= 0, incidentCooldownRemaining <= 0 else { return }
+        // Don't interrupt start-gate launch or the final sprint to the finish line
+        guard distanceMeters >= 25.0, distanceMeters <= totalDistanceMeters - 40.0 else { return }
+
+        incidentCutawayRemaining = Self.incidentCutawayDurationSeconds
+        incidentCooldownRemaining = Self.incidentCooldownSeconds
         incidentTargetDistance = distanceMeters
         incidentTargetLane = lane
     }
 
     public func resetForNewRace() {
+        autoCycleIndex = 0
         autoSwitchElapsed = 0.0
         incidentCutawayRemaining = 0.0
+        incidentCooldownRemaining = 6.0
         activeAutoAngle = .startGateCrane
     }
 
@@ -47,21 +61,31 @@ public final class BroadcastCameraDirector3D {
         if incidentCutawayRemaining > 0 {
             incidentCutawayRemaining = max(0, incidentCutawayRemaining - dt)
         }
+        if incidentCooldownRemaining > 0 {
+            incidentCooldownRemaining = max(0, incidentCooldownRemaining - dt)
+        }
 
         let effectiveAngle: BroadcastCameraAngle
         if selectedMode != .auto {
             effectiveAngle = selectedMode
         } else if !isRacing {
             effectiveAngle = .startGateCrane
-        } else if leaderDistance >= course.totalDistanceMeters - 22.0 {
+        } else if leaderDistance < 14.0 {
+            effectiveAngle = .startGateCrane
+        } else if leaderDistance >= course.totalDistanceMeters - 25.0 {
             effectiveAngle = .finishPhotoCam
         } else {
-            autoSwitchElapsed += dt
-            if autoSwitchElapsed >= 4.5 {
+            if activeAutoAngle == .startGateCrane {
+                activeAutoAngle = autoCycle[0]
+                autoCycleIndex = 0
                 autoSwitchElapsed = 0.0
-                let cycle: [BroadcastCameraAngle] = [.droneChase, .tracksideDolly, .overheadTactical, .droneChase]
-                let currentIdx = cycle.firstIndex(of: activeAutoAngle) ?? 0
-                activeAutoAngle = cycle[(currentIdx + 1) % cycle.count]
+            } else {
+                autoSwitchElapsed += dt
+                if autoSwitchElapsed >= Self.autoShotDurationSeconds {
+                    autoSwitchElapsed = 0.0
+                    autoCycleIndex = (autoCycleIndex + 1) % autoCycle.count
+                    activeAutoAngle = autoCycle[autoCycleIndex]
+                }
             }
             effectiveAngle = activeAutoAngle
         }

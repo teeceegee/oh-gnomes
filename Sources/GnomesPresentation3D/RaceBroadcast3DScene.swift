@@ -112,14 +112,26 @@ public final class RaceBroadcast3DScene: ObservableObject {
         guard let runner = gnomeNodes.first(where: { $0.gnome.id == gnomeId }) else { return }
         let ps: SCNParticleSystem
         switch type {
-        case .mudSplash, .mudSlideBowling, .stumble, .gnomePileup, .gnomeCollision:
+        case .mudSplash, .stumble, .gnomeCollision:
             ps = ParticleFX3D.makeMudSplash3D()
-            cameraDirector.triggerIncidentCutaway(distanceMeters: Double(runner.position.x), lane: runner.lane)
+        case .mudSlideBowling, .gnomePileup:
+            ps = ParticleFX3D.makeMudSplash3D()
+            cameraDirector.triggerIncidentCutaway(
+                distanceMeters: Double(runner.position.x),
+                lane: runner.lane,
+                totalDistanceMeters: course.totalDistanceMeters
+            )
         case .sprinklerDaze:
             ps = ParticleFX3D.makeWaterSpray3D()
-        case .airborneLaunch, .sprintSurge, .hedgeShortcut, .snailDistraction, .hatSteal:
+        case .sprintSurge, .hedgeShortcut, .hatSteal:
             ps = ParticleFX3D.makeSpringBurst3D()
-            cameraDirector.triggerIncidentCutaway(distanceMeters: Double(runner.position.x), lane: runner.lane)
+        case .airborneLaunch, .snailDistraction:
+            ps = ParticleFX3D.makeSpringBurst3D()
+            cameraDirector.triggerIncidentCutaway(
+                distanceMeters: Double(runner.position.x),
+                lane: runner.lane,
+                totalDistanceMeters: course.totalDistanceMeters
+            )
         }
         runner.addParticleSystem(ps)
     }
