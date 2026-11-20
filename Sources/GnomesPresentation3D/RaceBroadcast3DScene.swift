@@ -89,7 +89,7 @@ public final class RaceBroadcast3DScene: ObservableObject {
 
         let startPt = course.position3D(atDistanceMeters: 2.0, lane: 4)
         cameraNode.position = SCNVector3(startPt.x - 9.5, startPt.y + 5.2, startPt.z + 8.5)
-        cameraNode.look(at: SCNVector3(startPt.x + 8.0, startPt.y + 1.0, startPt.z))
+        cameraNode.look(at: SCNVector3(startPt.x + 8.0, startPt.y + 1.0, startPt.z), up: SCNVector3(0, 1, 0), localFront: SCNVector3(0, 0, -1))
         scene.rootNode.addChildNode(cameraNode)
     }
 

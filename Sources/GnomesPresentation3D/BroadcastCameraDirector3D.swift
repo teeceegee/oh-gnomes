@@ -109,9 +109,9 @@ public final class BroadcastCameraDirector3D {
 
             case .overheadTactical:
                 desiredPos = SCNVector3(
-                    trackPt.x - forwardX * 3.0,
-                    trackPt.y + 18.0,
-                    trackPt.z - forwardZ * 3.0 + 0.1
+                    trackPt.x - forwardX * 9.0,
+                    trackPt.y + 17.0,
+                    trackPt.z - forwardZ * 9.0
                 )
 
             case .finishPhotoCam:
@@ -139,6 +139,6 @@ public final class BroadcastCameraDirector3D {
             smoothedLookAt.y + (desiredLookAt.y - smoothedLookAt.y) * alpha,
             smoothedLookAt.z + (desiredLookAt.z - smoothedLookAt.z) * alpha
         )
-        cameraNode.look(at: smoothedLookAt)
+        cameraNode.look(at: smoothedLookAt, up: SCNVector3(0, 1, 0), localFront: SCNVector3(0, 0, -1))
     }
 }

@@ -283,7 +283,7 @@ public final class Gnome3DNode: SCNNode {
         let textNode = SCNNode(geometry: textGeo)
         textNode.position = SCNVector3(-(maxB.x - minB.x) / 2.0, 1.55, 0)
         let billboard = SCNBillboardConstraint()
-        billboard.freeAxes = .Y
+        billboard.freeAxes = .all
         textNode.constraints = [billboard]
         addChildNode(textNode)
     }
