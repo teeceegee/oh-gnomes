@@ -1,6 +1,7 @@
 import SwiftUI
 import CoreImage.CIFilterBuiltins
 import GnomesPresentation3D
+import GnomesAudio
 
 public struct HostBroadcastView: View {
     @ObservedObject var viewModel: HostViewModel
@@ -236,7 +237,7 @@ public struct HostBroadcastView: View {
 
                 Spacer()
 
-                // Multi-Camera Angle Switcher Bar
+                // Multi-Camera Angle & Studio Audio Control Bar
                 HStack(spacing: 8) {
                     Text("📷 CAM:")
                         .font(.system(size: 11, weight: .black))
@@ -253,6 +254,37 @@ public struct HostBroadcastView: View {
                         }
                         .buttonStyle(.plain)
                     }
+
+                    Divider().frame(height: 16).background(Color.white.opacity(0.3))
+
+                    Menu {
+                        ForEach(CommentatorVoice.allCases, id: \.self) { voice in
+                            Button(action: { viewModel.setCommentatorVoice(voice) }) {
+                                Text(voice == viewModel.selectedVoice ? "✓ \(voice.displayName)" : voice.displayName)
+                            }
+                        }
+                    } label: {
+                        Text("🎙 \(viewModel.selectedVoice.displayName)")
+                            .font(.system(size: 11, weight: .bold))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(Color.indigo.opacity(0.85))
+                            .foregroundColor(.white)
+                            .cornerRadius(6)
+                    }
+                    .menuStyle(.borderlessButton)
+                    .fixedSize()
+
+                    Button(action: { viewModel.toggleAmbience() }) {
+                        Text(viewModel.isAmbienceEnabled ? "🔊 Ambience" : "🔇 Ambience")
+                            .font(.system(size: 11, weight: .bold))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(viewModel.isAmbienceEnabled ? Color.green.opacity(0.8) : Color.gray.opacity(0.65))
+                            .foregroundColor(.white)
+                            .cornerRadius(6)
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)

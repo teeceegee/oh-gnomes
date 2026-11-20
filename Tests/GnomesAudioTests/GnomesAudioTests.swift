@@ -18,7 +18,7 @@ struct GnomesAudioTests {
 
     @Test("Commentary Engine Initialization & Subtitle Callback")
     func testCommentaryEngineSubtitles() {
-        let engine = CommentaryEngine()
+        let engine = CommentaryEngine(enableKokoro: false)
         let collector = SubtitleCollector()
 
         engine.onSubtitleEmitted = { text in
@@ -50,14 +50,34 @@ struct GnomesAudioTests {
         #expect(finish.contains("Eldred Oakfoot"))
     }
 
-    @Test("Audio FX Synthesizer Buffer Generation")
+    @Test("Audio FX Synthesizer & Multi-Bus BroadcastAudioMixer (EVD-320)")
     func testAudioFXSynthesizer() {
-        let fx = AudioFXSynthesizer()
-        // Test playing various sound effects (verifies buffer scheduling without runtime exception)
+        let mixer = BroadcastAudioMixer()
+        mixer.setAmbienceEnabled(true)
+        #expect(mixer.isAmbienceEnabled)
+        mixer.setRaceIntensity(true)
+        mixer.setCommentaryDucking(true)
+        mixer.setCommentaryDucking(false)
+        mixer.setAmbienceEnabled(false)
+        #expect(!mixer.isAmbienceEnabled)
+
+        let fx = AudioFXSynthesizer(mixer: mixer)
         fx.playEffect(.startingGun)
+        fx.playEffect(.raceBell)
         fx.playEffect(.trumpetFanfare)
         fx.playEffect(.mudSquelch)
         fx.playEffect(.springBoing)
+        fx.playEffect(.crowdCheer)
         fx.playEffect(.victoryCelebration)
+    }
+
+    @Test("Kokoro v1.0 ONNX Persistent Worker 24kHz PCM Synthesis (EVD-318, EVD-319)")
+    func testKokoroONNXSynthesis() {
+        let client = KokoroTTSClient(autoStart: false)
+        defer { client.shutdown() }
+        if let result = client.synthesize(text: "And they are off!", voice: .george, speed: 1.08) {
+            #expect(result.sampleRate == 24_000.0)
+            #expect(result.samples.count > 10_000)
+        }
     }
 }

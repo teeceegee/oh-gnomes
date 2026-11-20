@@ -21,6 +21,8 @@ public final class HostViewModel: ObservableObject {
     @Published public var isRunningRace: Bool = false
     @Published public var broadcastScene: RaceBroadcast3DScene
     @Published public var selectedCameraAngle: BroadcastCameraAngle = .auto
+    @Published public var selectedVoice: CommentatorVoice = .george
+    @Published public var isAmbienceEnabled: Bool = true
     @Published public var bettingSecondsRemaining: Int? = nil
     @Published public var isMysteryMode: Bool = true
     @Published public var lastRacePodium: [RunnerState] = []
@@ -28,6 +30,7 @@ public final class HostViewModel: ObservableObject {
 
     public let sessionManager: SessionManager
     public let httpServer: GnomesHTTPServer
+    public let audioMixer: BroadcastAudioMixer
     public let commentaryEngine: CommentaryEngine
     public let commentaryGenerator: ProceduralCommentaryGenerator
     public let audioFX: AudioFXSynthesizer
@@ -83,11 +86,13 @@ public final class HostViewModel: ObservableObject {
         let activeCourse = courses[0]
         let raceEntrants = Array(loadedGnomes.prefix(8))
 
-        // 2. Setup presentation & audio engines
+        // 2. Setup presentation & studio broadcast audio engines
+        let mixer = BroadcastAudioMixer()
+        self.audioMixer = mixer
         self.broadcastScene = RaceBroadcast3DScene(course: activeCourse, gnomes: raceEntrants)
-        self.commentaryEngine = CommentaryEngine()
+        self.commentaryEngine = CommentaryEngine(mixer: mixer, enableKokoro: true)
         self.commentaryGenerator = ProceduralCommentaryGenerator()
-        self.audioFX = AudioFXSynthesizer()
+        self.audioFX = AudioFXSynthesizer(mixer: mixer)
 
         // 3. Setup server on verified port 8778 (overrideable via OH_GNOMES_PORT)
         let portOverride = ProcessInfo.processInfo.environment["OH_GNOMES_PORT"].flatMap { UInt16($0) } ?? 8778
@@ -115,11 +120,24 @@ public final class HostViewModel: ObservableObject {
         self.broadcastScene.setCameraAngle(angle)
     }
 
+    public func setCommentatorVoice(_ voice: CommentatorVoice) {
+        self.selectedVoice = voice
+        self.commentaryEngine.selectedVoice = voice
+        self.commentaryEngine.speak("Testing the broadcast microphone — \(voice.displayName) ready for race night!", drama: .normal, interrupt: true)
+    }
+
+    public func toggleAmbience() {
+        let next = !isAmbienceEnabled
+        self.isAmbienceEnabled = next
+        self.audioMixer.setAmbienceEnabled(next)
+    }
+
     private var hasStarted = false
 
     public func start() {
         guard !hasStarted else { return }
         hasStarted = true
+        audioMixer.startIfNeeded()
 
         Task {
             do {
@@ -291,6 +309,8 @@ public final class HostViewModel: ObservableObject {
         let seed = UInt64.random(in: 1...1_000_000)
         let entrants = await sessionManager.currentEntrants
 
+        self.audioMixer.setRaceIntensity(true)
+        self.audioFX.playEffect(.raceBell)
         self.audioFX.playEffect(.startingGun)
         let startSpeech = commentaryGenerator.commentaryForStart(courseName: course.name, entrantsCount: entrants.count, seed: Int(seed))
         self.commentaryEngine.speak(startSpeech, drama: .excited)
@@ -323,6 +343,7 @@ public final class HostViewModel: ObservableObject {
                 guard let rank = finisher.finishRank, rank <= 3, !announcedRanks.contains(rank) else { continue }
                 announcedRanks.insert(rank)
                 if rank == 1 {
+                    audioFX.playEffect(.crowdCheer)
                     audioFX.playEffect(.trumpetFanfare)
                     broadcastScene.triggerFinishConfetti()
                     let winLine = commentaryGenerator.commentaryForWinner(winnerName: finisher.gnomeName, seed: Int(seed))
@@ -334,11 +355,16 @@ public final class HostViewModel: ObservableObject {
                 }
             }
 
-            // Live incident particle FX + throttled commentary (only before winner finishes)
+            // Live incident particle FX + audio FX + throttled commentary (only before winner finishes)
             if engine.incidents.count > lastIncidentCount {
                 let newIncident = engine.incidents[lastIncidentCount]
                 lastIncidentCount = engine.incidents.count
                 broadcastScene.triggerIncidentEffect(gnomeId: newIncident.runnerId, type: newIncident.incidentType)
+                if newIncident.incidentType == .airborneLaunch {
+                    audioFX.playEffect(.springBoing)
+                } else if newIncident.incidentType == .mudSplash || newIncident.incidentType == .mudSlideBowling {
+                    audioFX.playEffect(.mudSquelch)
+                }
                 if !announcedRanks.contains(1),
                    !commentaryEngine.isSpeaking && (engine.currentTick - lastCommentaryTick) >= 75 {
                     lastCommentaryTick = engine.currentTick
@@ -369,6 +395,7 @@ public final class HostViewModel: ObservableObject {
         }
 
         // Finish line & settlement
+        audioMixer.setRaceIntensity(false)
         _ = try? await sessionManager.runSimulationAndSettle(course: course, seed: seed)
 
         let podium = engine.runners

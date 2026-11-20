@@ -27,9 +27,12 @@ if [ -d "${ROOT_DIR}/.build/arm64-apple-macosx/release/OhGnomes_GnomesCore.bundl
     cp -R "${ROOT_DIR}/.build/arm64-apple-macosx/release/OhGnomes_GnomesCore.bundle" "${RESOURCES_DIR}/"
 fi
 
-# Copy Content directory into app resources
+# Copy Content, WebController & Kokoro TTS worker into app resources
 cp -R "${ROOT_DIR}/Content" "${RESOURCES_DIR}/"
 cp -R "${ROOT_DIR}/WebController" "${RESOURCES_DIR}/"
+mkdir -p "${RESOURCES_DIR}/scripts"
+cp "${ROOT_DIR}/scripts/kokoro_worker.py" "${RESOURCES_DIR}/scripts/"
+chmod +x "${RESOURCES_DIR}/scripts/kokoro_worker.py"
 
 # Write Info.plist
 cat << 'EOF' > "${CONTENTS_DIR}/Info.plist"

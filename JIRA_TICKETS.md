@@ -344,3 +344,8 @@
 | [EVD-312](https://echopost.atlassian.net/browse/EVD-312) | Task | **Done** | Medium | EVD-306 | Complex Multi-Hazard Garden Courses (Slopes, Turns, Shortcuts & Moving Traps) |
 | [EVD-313](https://echopost.atlassian.net/browse/EVD-313) | Task | **Done** | Medium | EVD-306 | Upgraded Expressive Broadcast Voice Engine |
 | [EVD-314](https://echopost.atlassian.net/browse/EVD-314) | Task | **Done** | Medium | EVD-306 | Expanded Comedy Race Events & Slapstick Incidents |
+| [EVD-317](https://echopost.atlassian.net/browse/EVD-317) | Epic | **Done** | Medium | - | [Oh! Gnomes] Phase 4: Studio Neural Voice (Kokoro ONNX) & Broadcast Audio Mix |
+| [EVD-318](https://echopost.atlassian.net/browse/EVD-318) | Task | **Done** | Medium | EVD-317 | Build Persistent In-Memory Kokoro ONNX Worker (M4 CPU NEON) with Zero-Disk PCM Pipe |
+| [EVD-319](https://echopost.atlassian.net/browse/EVD-319) | Task | **Done** | Medium | EVD-317 | Upgrade CommentaryEngine to Stream Kokoro 24kHz PCM into AVAudioEngine with AVSpeech Fallback |
+| [EVD-320](https://echopost.atlassian.net/browse/EVD-320) | Task | **Done** | Medium | EVD-317 | Build Multi-Bus BroadcastAudioMixer (Crowd Ambience, Race Bell, Ducking Music & FX) |
+| [EVD-321](https://echopost.atlassian.net/browse/EVD-321) | Task | **Done** | Medium | EVD-317 | Add Host Commentator Voice Selector & Audio Controls in HostBroadcastView |
