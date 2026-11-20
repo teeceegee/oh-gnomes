@@ -69,6 +69,13 @@ struct GnomesAudioTests {
         fx.playEffect(.springBoing)
         fx.playEffect(.crowdCheer)
         fx.playEffect(.victoryCelebration)
+
+        // Rapid concurrent voice interrupt / stopVoice stress test (deadlock regression guard)
+        let dummyPCM = KokoroPCMResult(sampleRate: 24_000, samples: [Float](repeating: 0.01, count: 4_800))
+        for _ in 0..<20 {
+            mixer.playVoicePCM(dummyPCM, interrupt: true)
+            mixer.stopVoice()
+        }
     }
 
     @Test("Kokoro v1.0 ONNX Persistent Worker 24kHz PCM Synthesis (EVD-318, EVD-319)")

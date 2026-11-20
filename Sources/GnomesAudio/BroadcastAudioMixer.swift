@@ -3,7 +3,13 @@ import AVFoundation
 
 /// Multi-bus broadcast audio mixer hosting Kokoro neural commentary,
 /// looping stadium crowd ambience, ducking race-day background music, and sound FX.
+///
+/// All AVAudioEngine / AVAudioPlayerNode operations are strictly serialized onto `audioQueue`
+/// via async dispatch so the Main Thread and AVFAudio's internal completion queue can never deadlock.
 public final class BroadcastAudioMixer: @unchecked Sendable {
+    private let audioQueue = DispatchQueue(label: "com.echopost.ohgnomes.audio.mixer", qos: .userInteractive)
+    private let stateLock = NSLock()
+
     private let engine = AVAudioEngine()
     private let voicePlayer = AVAudioPlayerNode()
     private let musicPlayer = AVAudioPlayerNode()
@@ -13,12 +19,12 @@ public final class BroadcastAudioMixer: @unchecked Sendable {
     private let voiceFormat: AVAudioFormat
     private let fxFormat: AVAudioFormat
 
-    private let stateLock = NSLock()
     private var _isAmbienceEnabled: Bool = true
     private var _isRacing: Bool = false
     private var _isDucked: Bool = false
     private var _isEngineStarted: Bool = false
     private var _activeVoiceBuffers: Int = 0
+    private var _voiceGeneration: UInt64 = 0
 
     public var isAmbienceEnabled: Bool {
         stateLock.withLock { _isAmbienceEnabled }
@@ -44,23 +50,27 @@ public final class BroadcastAudioMixer: @unchecked Sendable {
 
         voicePlayer.volume = 1.0
         fxPlayer.volume = 0.85
-        applyBusVolumesLocked()
+        applyBusVolumesOnAudioQueue()
     }
 
     public func startIfNeeded() {
-        stateLock.withLock {
-            guard !_isEngineStarted else { return }
-            do {
-                try engine.start()
-                _isEngineStarted = true
-                startAmbientLoopsLocked()
-            } catch {
-                // Headless or audio-unavailable CI environment
-            }
+        audioQueue.async { [weak self] in
+            self?.startIfNeededOnAudioQueue()
         }
     }
 
-    private func startAmbientLoopsLocked() {
+    private func startIfNeededOnAudioQueue() {
+        guard !_isEngineStarted else { return }
+        do {
+            try engine.start()
+            _isEngineStarted = true
+            startAmbientLoopsOnAudioQueue()
+        } catch {
+            // Headless or audio-unavailable environment
+        }
+    }
+
+    private func startAmbientLoopsOnAudioQueue() {
         if let musicBuf = synthesizeRaceDayMusicLoop() {
             musicPlayer.scheduleBuffer(musicBuf, at: nil, options: .loops)
             musicPlayer.play()
@@ -69,39 +79,42 @@ public final class BroadcastAudioMixer: @unchecked Sendable {
             crowdPlayer.scheduleBuffer(crowdBuf, at: nil, options: .loops)
             crowdPlayer.play()
         }
-        applyBusVolumesLocked()
+        applyBusVolumesOnAudioQueue()
     }
 
     public func setAmbienceEnabled(_ enabled: Bool) {
-        stateLock.withLock {
-            _isAmbienceEnabled = enabled
-            applyBusVolumesLocked()
+        stateLock.withLock { _isAmbienceEnabled = enabled }
+        audioQueue.async { [weak self] in
+            self?.applyBusVolumesOnAudioQueue()
         }
     }
 
     public func setRaceIntensity(_ isRacing: Bool) {
-        stateLock.withLock {
-            _isRacing = isRacing
-            applyBusVolumesLocked()
+        stateLock.withLock { _isRacing = isRacing }
+        audioQueue.async { [weak self] in
+            self?.applyBusVolumesOnAudioQueue()
         }
     }
 
     public func setCommentaryDucking(_ ducked: Bool) {
-        stateLock.withLock {
-            _isDucked = ducked
-            applyBusVolumesLocked()
+        stateLock.withLock { _isDucked = ducked }
+        audioQueue.async { [weak self] in
+            self?.applyBusVolumesOnAudioQueue()
         }
     }
 
-    private func applyBusVolumesLocked() {
-        guard _isAmbienceEnabled else {
+    private func applyBusVolumesOnAudioQueue() {
+        let (enabled, racing, ducked) = stateLock.withLock {
+            (_isAmbienceEnabled, _isRacing, _isDucked)
+        }
+        guard enabled else {
             musicPlayer.volume = 0.0
             crowdPlayer.volume = 0.0
             return
         }
-        let baseMusic: Float = _isRacing ? 0.14 : 0.20
-        let baseCrowd: Float = _isRacing ? 0.22 : 0.09
-        let duckScale: Float = _isDucked ? 0.28 : 1.0
+        let baseMusic: Float = racing ? 0.14 : 0.20
+        let baseCrowd: Float = racing ? 0.22 : 0.09
+        let duckScale: Float = ducked ? 0.28 : 1.0
 
         musicPlayer.volume = baseMusic * duckScale
         crowdPlayer.volume = baseCrowd * duckScale
@@ -109,7 +122,6 @@ public final class BroadcastAudioMixer: @unchecked Sendable {
 
     /// Plays a 24kHz Float32 Kokoro PCM voice buffer with automatic music/crowd ducking.
     public func playVoicePCM(_ pcm: KokoroPCMResult, interrupt: Bool, onComplete: (@Sendable () -> Void)? = nil) {
-        startIfNeeded()
         guard !pcm.samples.isEmpty else {
             onComplete?()
             return
@@ -129,54 +141,81 @@ public final class BroadcastAudioMixer: @unchecked Sendable {
             }
         }
 
-        if interrupt {
-            stopVoice()
-        }
-
-        stateLock.withLock {
-            _activeVoiceBuffers += 1
-            _isDucked = true
-            applyBusVolumesLocked()
-        }
-
-        voicePlayer.scheduleBuffer(buffer) { [weak self] in
+        audioQueue.async { [weak self] in
             guard let self = self else { return }
-            self.stateLock.withLock {
-                self._activeVoiceBuffers = max(0, self._activeVoiceBuffers - 1)
-                if self._activeVoiceBuffers == 0 {
-                    self._isDucked = false
-                    self.applyBusVolumesLocked()
+            self.startIfNeededOnAudioQueue()
+
+            if interrupt {
+                self.stopVoiceOnAudioQueue()
+            }
+
+            let gen: UInt64 = self.stateLock.withLock {
+                self._activeVoiceBuffers += 1
+                self._isDucked = true
+                return self._voiceGeneration
+            }
+            self.applyBusVolumesOnAudioQueue()
+
+            // IMPORTANT: Completion callback runs on AVFAudio's internal caulk queue.
+            // Never acquire locks or touch AVAudioNodes synchronously inside it — hop to audioQueue.async!
+            self.voicePlayer.scheduleBuffer(buffer) { [weak self] in
+                guard let self = self else { return }
+                self.audioQueue.async {
+                    let shouldUnduck = self.stateLock.withLock { () -> Bool in
+                        guard self._voiceGeneration == gen else { return false }
+                        self._activeVoiceBuffers = max(0, self._activeVoiceBuffers - 1)
+                        if self._activeVoiceBuffers == 0 {
+                            self._isDucked = false
+                            return true
+                        }
+                        return false
+                    }
+                    if shouldUnduck {
+                        self.applyBusVolumesOnAudioQueue()
+                    }
+                    onComplete?()
                 }
             }
-            onComplete?()
-        }
 
-        if !voicePlayer.isPlaying {
-            voicePlayer.play()
+            if !self.voicePlayer.isPlaying {
+                self.voicePlayer.play()
+            }
         }
     }
 
+    /// Non-blocking stop so callers on @MainActor never block waiting on AVFAudio.
     public func stopVoice() {
-        voicePlayer.stop()
+        audioQueue.async { [weak self] in
+            self?.stopVoiceOnAudioQueue()
+        }
+    }
+
+    private func stopVoiceOnAudioQueue() {
         stateLock.withLock {
+            _voiceGeneration &+= 1
             _activeVoiceBuffers = 0
             _isDucked = false
-            applyBusVolumesLocked()
         }
+        if voicePlayer.isPlaying {
+            voicePlayer.stop()
+        }
+        applyBusVolumesOnAudioQueue()
     }
 
     /// Schedules a 44.1kHz sound FX buffer on the FX bus.
     public func playFXBuffer(_ buffer: AVAudioPCMBuffer) {
-        startIfNeeded()
-        fxPlayer.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
-        if !fxPlayer.isPlaying {
-            fxPlayer.play()
+        audioQueue.async { [weak self] in
+            guard let self = self else { return }
+            self.startIfNeededOnAudioQueue()
+            self.fxPlayer.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
+            if !self.fxPlayer.isPlaying {
+                self.fxPlayer.play()
+            }
         }
     }
 
     // MARK: - Procedural Broadcast Loops (Generated Once at Startup)
 
-    /// Generates an upbeat 8-second garden derby brass/marimba chord loop.
     private func synthesizeRaceDayMusicLoop() -> AVAudioPCMBuffer? {
         let sr = 44_100.0
         let duration = 8.0
@@ -185,7 +224,6 @@ public final class BroadcastAudioMixer: @unchecked Sendable {
               let ch = buf.floatChannelData?[0] else { return nil }
         buf.frameLength = AVAudioFrameCount(frameCount)
 
-        // Bright major British country-fair chord sequence (C - G - Am - F - C - G - F - G)
         let chords: [[Double]] = [
             [261.63, 329.63, 392.00], // C
             [293.66, 392.00, 493.88], // G
@@ -217,7 +255,6 @@ public final class BroadcastAudioMixer: @unchecked Sendable {
         return buf
     }
 
-    /// Generates a warm 4-second seamless stadium crowd murmur (band-filtered pink noise).
     private func synthesizeCrowdMurmurLoop() -> AVAudioPCMBuffer? {
         let sr = 44_100.0
         let duration = 4.0
@@ -226,7 +263,6 @@ public final class BroadcastAudioMixer: @unchecked Sendable {
               let ch = buf.floatChannelData?[0] else { return nil }
         buf.frameLength = AVAudioFrameCount(frameCount)
 
-        // Simple deterministic pink-ish low-pass filtered noise with smooth crossfade at loop seam
         var b0 = 0.0, b1 = 0.0, b2 = 0.0
         var state: UInt64 = 0x5EED_C0DE_1234
         for i in 0..<frameCount {
