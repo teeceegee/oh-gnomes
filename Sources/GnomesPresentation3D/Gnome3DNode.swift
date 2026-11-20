@@ -345,8 +345,12 @@ public final class Gnome3DNode: SCNNode {
             bodyRoot.eulerAngles = SCNVector3(0, 0, CGFloat(-stridePhase * 1.5)) // Somersault!
 
         case .stumbled:
-            bodyRoot.position.y = 0.15
-            bodyRoot.eulerAngles = SCNVector3(0.3, 0, CGFloat.pi / 2.2) // Faceplant tumble!
+            bodyRoot.position.y = 0.22
+            bodyRoot.eulerAngles = SCNVector3(0.08, 0, -CGFloat.pi / 2.05) // Forward faceplant onto face!
+            leftArm.eulerAngles = SCNVector3(0, 0, -1.2)
+            rightArm.eulerAngles = SCNVector3(0, 0, -1.2)
+            leftLeg.eulerAngles = SCNVector3(0, 0, 0.35)
+            rightLeg.eulerAngles = SCNVector3(0, 0, -0.25)
 
         case .mudStuck:
             let slowSwing = CGFloat(sin(stridePhase * 0.4)) * 0.25
