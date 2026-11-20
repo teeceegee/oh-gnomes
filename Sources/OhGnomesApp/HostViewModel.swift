@@ -123,7 +123,12 @@ public final class HostViewModel: ObservableObject {
     public func setCommentatorVoice(_ voice: CommentatorVoice) {
         self.selectedVoice = voice
         self.commentaryEngine.selectedVoice = voice
-        self.commentaryEngine.speak("Testing the broadcast microphone — \(voice.displayName) ready for race night!", drama: .normal, interrupt: true)
+        if voice == .none {
+            self.commentaryEngine.stopSpeaking()
+            self.subtitleText = "Commentary muted (subtitles only)."
+        } else {
+            self.commentaryEngine.speak("Testing the broadcast microphone — \(voice.displayName) ready for race night!", drama: .normal, interrupt: true)
+        }
     }
 
     public func toggleAmbience() {

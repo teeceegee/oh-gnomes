@@ -7,6 +7,7 @@ public enum CommentatorVoice: String, CaseIterable, Sendable {
     case fable = "bm_fable"
     case emma = "bf_emma"
     case alice = "bf_alice"
+    case none = "none"
 
     public var displayName: String {
         switch self {
@@ -16,6 +17,7 @@ public enum CommentatorVoice: String, CaseIterable, Sendable {
         case .fable: return "Fable (Drama)"
         case .emma: return "Emma (UK)"
         case .alice: return "Alice (UK)"
+        case .none: return "No Commentary"
         }
     }
 }

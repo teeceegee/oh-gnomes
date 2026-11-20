@@ -25,7 +25,12 @@ public final class CommentaryEngine: NSObject, @unchecked Sendable, AVSpeechSynt
 
     public var selectedVoice: CommentatorVoice {
         get { stateLock.withLock { _selectedVoice } }
-        set { stateLock.withLock { _selectedVoice = newValue } }
+        set {
+            stateLock.withLock { _selectedVoice = newValue }
+            if newValue == .none {
+                stopSpeaking()
+            }
+        }
     }
 
     public var isUsingStudioNeuralVoice: Bool {
@@ -68,6 +73,9 @@ public final class CommentaryEngine: NSObject, @unchecked Sendable, AVSpeechSynt
         onSubtitleEmitted?(text)
 
         let voice = selectedVoice
+        if voice == .none {
+            return
+        }
         let kokoroSpeed: Double
         let fallbackPitch: Float
         let fallbackRate: Float
@@ -136,6 +144,7 @@ public final class CommentaryEngine: NSObject, @unchecked Sendable, AVSpeechSynt
             stopSpeaking()
         }
         onSubtitleEmitted?(text)
+        guard selectedVoice != .none else { return }
         speakFallback(text, pitch: pitchMultiplier, rate: rateMultiplier)
     }
 

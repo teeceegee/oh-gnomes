@@ -264,11 +264,11 @@ public struct HostBroadcastView: View {
                             }
                         }
                     } label: {
-                        Text("🎙 \(viewModel.selectedVoice.displayName)")
+                        Text(viewModel.selectedVoice == .none ? "🔇 No Commentary" : "🎙 \(viewModel.selectedVoice.displayName)")
                             .font(.system(size: 11, weight: .bold))
                             .padding(.horizontal, 10)
                             .padding(.vertical, 5)
-                            .background(Color.indigo.opacity(0.85))
+                            .background(viewModel.selectedVoice == .none ? Color.gray.opacity(0.65) : Color.indigo.opacity(0.85))
                             .foregroundColor(.white)
                             .cornerRadius(6)
                     }
